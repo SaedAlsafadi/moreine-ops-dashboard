@@ -112,10 +112,10 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-cream-dark shadow-sm">
-        <table className="min-w-full bg-white">
-          <thead className="bg-cream border-b border-cream-dark">
-            <tr>
+      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
+        <table className="w-full min-w-max text-start">
+          <thead>
+            <tr className="border-b border-light">
               {[
                 t('movements.date'),
                 t('movements.category'),
@@ -125,25 +125,25 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
                 t('movements.toChannel'),
                 t('movements.note'),
               ].map(h => (
-                <th key={h} className="px-4 py-3 text-start text-xs font-semibold text-olive uppercase tracking-wide whitespace-nowrap">{h}</th>
+                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream">
+          <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-olive/50 text-sm">{t('common.noData')}</td>
+                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
               </tr>
             ) : (
               filtered.map(m => (
-                <tr key={m.id} className="hover:bg-cream-light transition">
-                  <td className="px-4 py-3 text-xs text-charcoal whitespace-nowrap">
+                <tr key={m.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
+                  <td className="py-4 px-4 text-xs font-semibold text-charcoal whitespace-nowrap">
                     {new Date(m.date).toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-US', {
                       dateStyle: 'short',
                       timeStyle: 'short',
                     })}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="py-4 px-4">
                     <Badge
                       label={m.category === 'green' ? '🌿 ' + (locale === 'ar' ? 'أخضر' : 'Green') : '☕ ' + (locale === 'ar' ? 'محمص' : 'Roasted')}
                       variant={m.category === 'green' ? 'green' : 'sage'}

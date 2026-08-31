@@ -144,10 +144,10 @@ export default function SalesClient({ sales }: SalesClientProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-cream-dark shadow-sm">
-        <table className="min-w-full bg-white">
-          <thead className="bg-cream border-b border-cream-dark">
-            <tr>
+      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
+        <table className="w-full min-w-max text-start">
+          <thead>
+            <tr className="border-b border-light">
               {[
                 t('sales.date'),
                 t('sales.channel'),
@@ -157,20 +157,20 @@ export default function SalesClient({ sales }: SalesClientProps) {
                 t('sales.source'),
                 t('greenInventory.actions'),
               ].map(h => (
-                <th key={h} className="px-4 py-3 text-start text-xs font-semibold text-olive uppercase tracking-wide whitespace-nowrap">{h}</th>
+                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream">
+          <tbody>
             {filteredSales.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-olive/50 text-sm">{t('common.noData')}</td>
+                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
               </tr>
             ) : (
               filteredSales.map(sale => (
-                <tr key={sale.id} className="hover:bg-cream-light transition">
-                  <td className="px-4 py-3 text-sm text-charcoal whitespace-nowrap">{sale.date}</td>
-                  <td className="px-4 py-3"><Badge label={sale.channel.toUpperCase()} variant={channelVariant[sale.channel]} /></td>
+                <tr key={sale.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
+                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{sale.date}</td>
+                  <td className="py-4 px-4 text-sm text-charcoal"><Badge label={sale.channel.toUpperCase()} variant={channelVariant[sale.channel]} /></td>
                   <td className="px-4 py-3 text-sm text-charcoal max-w-xs">{sale.product_description}</td>
                   <td className="px-4 py-3 text-sm text-charcoal whitespace-nowrap">
                     {sale.quantity} {sale.unit === 'kg' ? 'kg' : (locale === 'ar' ? 'وحدة' : 'units')}

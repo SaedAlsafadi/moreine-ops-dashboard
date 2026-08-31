@@ -124,16 +124,16 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Yield Chart */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-cream-dark p-5 shadow-sm">
-          <h2 className="text-base font-semibold text-olive mb-4">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-horizon-sm p-6">
+          <h2 className="text-lg font-bold text-olive mb-4">
             {locale === 'ar' ? 'اتجاه نسبة الحمص (آخر ١٠ دفعات)' : 'Roast Yield Trend (Last 10 Batches)'}
           </h2>
           <YieldChart data={yieldData} />
         </div>
 
         {/* Channel Breakdown */}
-        <div className="bg-white rounded-xl border border-cream-dark p-5 shadow-sm">
-          <h2 className="text-base font-semibold text-olive mb-4">
+        <div className="bg-white rounded-xl shadow-horizon-sm p-6">
+          <h2 className="text-lg font-bold text-olive mb-4">
             {locale === 'ar' ? 'المخزون حسب القناة' : 'Stock by Channel'}
           </h2>
           <div className="space-y-3">
@@ -177,26 +177,28 @@ export default async function DashboardPage() {
       )}
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-xl border border-cream-dark shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-cream-dark">
-          <h2 className="text-base font-semibold text-olive">{tr.dashboard.recentActivity}</h2>
+      <div className="bg-white rounded-xl shadow-horizon-sm overflow-hidden p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-bold text-olive">{tr.dashboard.recentActivity}</h2>
         </div>
-        <div className="divide-y divide-cream">
+        <div className="space-y-4">
           {(recentMovements ?? []).length === 0 ? (
-            <div className="px-5 py-8 text-center text-olive/50 text-sm">{tr.common.noData}</div>
+            <div className="py-8 text-center text-olive/50 text-sm">{tr.common.noData}</div>
           ) : (
             (recentMovements ?? []).map(m => (
-              <div key={m.id} className="px-5 py-3 flex items-start sm:items-center gap-3 flex-col sm:flex-row">
-                <Badge label={m.action} variant={actionBadgeVariant[m.action] ?? 'gray'} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-charcoal truncate">
-                    {m.category === 'green' ? '🌿' : '☕'} {m.note || m.action}
-                  </p>
-                  <p className="text-xs text-olive/50 mt-0.5">
-                    {new Date(m.date).toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' })}
-                  </p>
+              <div key={m.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg hover:bg-light/50 transition">
+                <div className="flex items-center gap-3 w-full">
+                  <Badge label={m.action} variant={actionBadgeVariant[m.action] ?? 'gray'} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-charcoal truncate">
+                      {m.category === 'green' ? '🌿' : '☕'} {m.note || m.action}
+                    </p>
+                    <p className="text-xs text-olive/50 mt-1">
+                      {new Date(m.date).toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                    </p>
+                  </div>
                 </div>
-                <span className="text-sm font-medium text-olive shrink-0">
+                <span className="text-sm font-bold text-charcoal shrink-0">
                   {m.quantity_kg != null ? `${m.quantity_kg} kg` : '—'}
                 </span>
               </div>

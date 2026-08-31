@@ -158,36 +158,29 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
         <table className="min-w-full bg-white">
           <thead className="bg-cream border-b border-cream-dark">
             <tr>
-              {[
-                t('greenInventory.lotName'),
-                t('greenInventory.origin'),
-                t('greenInventory.supplier'),
-                t('greenInventory.arrivalDate'),
-                t('greenInventory.initialKg'),
-                t('greenInventory.remainingKg'),
-                t('greenInventory.costPerKg'),
-                t('greenInventory.actions'),
-              ].map(h => (
-                <th key={h} className="px-4 py-3 text-start text-xs font-semibold text-olive uppercase tracking-wide whitespace-nowrap">
-                  {h}
-                </th>
+      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
+        <table className="w-full min-w-max text-start">
+          <thead>
+            <tr className="border-b border-light">
+              {headers.map(h => (
+                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream">
+          <tbody>
             {lots.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-4 py-12 text-center text-olive/50 text-sm">{t('common.noData')}</td>
+                <td colSpan={8} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
               </tr>
             ) : (
               lots.map(lot => (
-                <tr key={lot.id} className="hover:bg-cream-light transition">
-                  <td className="px-4 py-3 text-sm font-medium text-charcoal">{lot.lot_name}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal">{lot.origin}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal">{lot.supplier}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal whitespace-nowrap">{lot.arrival_date}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal">{lot.initial_kg} kg</td>
-                  <td className="px-4 py-3 text-sm whitespace-nowrap">
+                <tr key={lot.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
+                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{lot.lot_name}</td>
+                  <td className="py-4 px-4 text-sm text-charcoal">{lot.origin}</td>
+                  <td className="py-4 px-4 text-sm text-charcoal">{lot.supplier}</td>
+                  <td className="py-4 px-4 text-sm text-charcoal">{lot.arrival_date}</td>
+                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{lot.initial_kg} kg</td>
+                  <td className="px-4 py-4 text-sm whitespace-nowrap">
                     <span className={lot.remaining_kg < lowStockThreshold ? 'text-amber-600 font-semibold' : 'text-charcoal'}>
                       {lot.remaining_kg} kg
                     </span>

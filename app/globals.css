@@ -26,7 +26,7 @@
    ========================================================= */
 @layer base {
   body {
-    @apply bg-cream text-charcoal antialiased;
+    @apply bg-light text-charcoal antialiased;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
       'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }

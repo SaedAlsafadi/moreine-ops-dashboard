@@ -25,7 +25,16 @@ const config: Config = {
           light: '#556640',
         },
         charcoal: '#2c2c2c',
+        // Horizon UI base background
+        light: '#F4F7FE',
       },
+      boxShadow: {
+        'horizon': '0px 18px 40px rgba(112, 144, 176, 0.12)',
+        'horizon-sm': '0px 8px 20px rgba(112, 144, 176, 0.08)',
+      },
+      borderRadius: {
+        'xl': '20px',
+      }
     },
   },
   plugins: [],

@@ -107,10 +107,10 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-cream-dark shadow-sm">
-        <table className="min-w-full bg-white">
-          <thead className="bg-cream border-b border-cream-dark">
-            <tr>
+      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
+        <table className="w-full min-w-max text-start">
+          <thead>
+            <tr className="border-b border-light">
               {[
                 t('roasting.roastDate'),
                 t('roasting.greenLot'),
@@ -120,22 +120,22 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
                 t('roasting.notes'),
                 t('greenInventory.actions'),
               ].map(h => (
-                <th key={h} className="px-4 py-3 text-start text-xs font-semibold text-olive uppercase tracking-wide whitespace-nowrap">
+                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">
                   {h}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-cream">
+          <tbody>
             {batches.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-olive/50 text-sm">{t('common.noData')}</td>
+                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
               </tr>
             ) : (
               batches.map(batch => (
-                <tr key={batch.id} className="hover:bg-cream-light transition">
-                  <td className="px-4 py-3 text-sm font-medium text-charcoal whitespace-nowrap">{batch.roast_date}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal">
+                <tr key={batch.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
+                  <td className="py-4 px-4 text-sm font-semibold text-charcoal whitespace-nowrap">{batch.roast_date}</td>
+                  <td className="py-4 px-4 text-sm text-charcoal">
                     <div>{batch.green_inventory?.lot_name ?? '—'}</div>
                     <div className="text-xs text-olive/60">{batch.green_inventory?.origin ?? ''}</div>
                   </td>

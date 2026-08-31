@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useLanguage } from '@/lib/i18n/context'
 
@@ -54,7 +55,7 @@ const NAV_LINKS: NavLink[] = [
     ar: 'المخزون المحمص',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4zM3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+        <path fillRule="evenodd" d="M5 2a2 2 0 00-2 2v14l3.5-2 3.5 2 3.5-2 3.5 2V4a2 2 0 00-2-2H5zm4.707 3.707a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L8.414 9H14a1 1 0 100-2H8.414l1.293-1.293z" clipRule="evenodd" />
       </svg>
     ),
   },
@@ -64,17 +65,18 @@ const NAV_LINKS: NavLink[] = [
     ar: 'المبيعات',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm0 2h8v12H6V4zm2 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm0 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+        <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
       </svg>
     ),
   },
   {
     href: '/movements',
-    en: 'Stock Movements',
-    ar: 'حركات المخزون',
+    en: 'Movements',
+    ar: 'الحركات',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+        <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clipRule="evenodd" />
       </svg>
     ),
   },
@@ -84,119 +86,81 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { locale } = useLanguage()
   const isArabic = locale === 'ar'
-  const isRtl = isArabic
 
-  // Close on Escape key press
+  // Close sidebar on route change (mobile)
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && isOpen) onClose()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+    onClose()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
-  // Lock body scroll when mobile drawer is open
+  // Close on Escape
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
     }
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [onClose])
 
-  const navContent = (
-    <nav className="flex h-full flex-col bg-[#ece7d4]">
-      {/* Sidebar header (desktop logo area) */}
-      <div className="flex h-14 items-center border-b border-[#9db090]/30 px-5">
-        <span className="text-base font-bold text-[#3d4a2e]">
-          Moreine <span className="text-xs font-normal opacity-50">Ops</span>
-        </span>
-        {/* Close button on mobile */}
-        <button
-          onClick={onClose}
-          className="ms-auto rounded-md p-1.5 text-[#3d4a2e]/60 hover:bg-[#9db090]/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9db090] md:hidden"
-          aria-label="Close sidebar"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
-      </div>
+  const baseClasses = 'fixed inset-y-0 z-50 flex w-[290px] flex-col bg-white shadow-horizon transition-transform duration-300 md:translate-x-0'
+  
+  // RTL-aware transform classes for mobile
+  const ltrTransform = isOpen ? 'translate-x-0' : '-translate-x-full'
+  const rtlTransform = isOpen ? 'translate-x-0' : 'translate-x-full'
+  const transformClass = isArabic ? rtlTransform : ltrTransform
 
-      {/* Nav links */}
-      <ul className="flex-1 space-y-0.5 overflow-y-auto px-2 py-3">
-        {NAV_LINKS.map((link) => {
-          const isActive = pathname?.startsWith(link.href)
-          return (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                onClick={onClose}
-                className={[
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-100',
-                  isActive
-                    ? 'bg-[#9db090] text-white shadow-sm'
-                    : 'text-[#3d4a2e] hover:bg-[#9db090]/15 hover:text-[#3d4a2e]',
-                ].join(' ')}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <span className={isActive ? 'text-white' : 'text-[#9db090]'} aria-hidden="true">
-                  {link.icon}
-                </span>
-                {isArabic ? link.ar : link.en}
-              </Link>
-            </li>
-          )
-        })}
-      </ul>
-
-      {/* Footer branding */}
-      <div className="border-t border-[#9db090]/30 px-5 py-3">
-        <p className="text-xs text-[#3d4a2e]/40">
-          {isArabic ? '© موراين لتحميص القهوة' : '© Moreine Coffee Roastery'}
-        </p>
-      </div>
-    </nav>
-  )
+  const placementClass = isArabic ? 'right-0' : 'left-0'
 
   return (
     <>
-      {/* ── Desktop sidebar (always visible ≥ md) ── */}
-      <aside
-        className="hidden md:flex md:w-56 md:flex-col md:flex-shrink-0 md:border-e md:border-[#9db090]/30"
-        dir={isRtl ? 'rtl' : 'ltr'}
-      >
-        {navContent}
-      </aside>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-olive/20 backdrop-blur-sm transition-opacity md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* ── Mobile drawer ── */}
-      {/* Backdrop */}
-      <div
-        className={[
-          'fixed inset-0 z-40 bg-[#3d4a2e]/40 backdrop-blur-sm transition-opacity duration-300 md:hidden',
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
-        ].join(' ')}
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      {/* Sidebar Panel */}
+      <aside className={`${baseClasses} ${transformClass} ${placementClass}`}>
+        {/* Logo Area */}
+        <div className="flex h-[110px] items-center justify-center border-b border-light mx-6">
+          {/* Use the new logo file we copied */}
+          <div className="relative w-40 h-20">
+            <img src="/logo.png" alt="Moreine Logo" className="object-contain w-full h-full" />
+          </div>
+        </div>
 
-      {/* Drawer panel */}
-      <aside
-        dir={isRtl ? 'rtl' : 'ltr'}
-        className={[
-          'fixed top-0 z-50 h-full w-64 shadow-xl transition-transform duration-300 md:hidden',
-          // Slide from right for RTL, from left for LTR
-          isRtl ? 'right-0' : 'left-0',
-          isOpen
-            ? 'translate-x-0'
-            : isRtl
-              ? 'translate-x-full'
-              : '-translate-x-full',
-        ].join(' ')}
-        aria-label="Navigation sidebar"
-      >
-        {navContent}
+        {/* Navigation Links */}
+        <nav className="flex-1 space-y-1 overflow-y-auto py-6 px-4">
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname?.startsWith(link.href)
+            
+            return (
+              <div key={link.href} className="relative">
+                {/* Active Indicator Pill */}
+                {isActive && (
+                  <div className={`absolute top-1/2 h-9 w-1 -translate-y-1/2 rounded-full bg-sage ${isArabic ? 'left-0' : 'right-0'}`} />
+                )}
+                
+                <Link
+                  href={link.href}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${
+                    isActive 
+                      ? 'text-olive font-bold' 
+                      : 'text-olive/50 font-medium hover:text-olive hover:bg-light'
+                  }`}
+                >
+                  <span className={`${isActive ? 'text-sage' : ''}`}>
+                    {link.icon}
+                  </span>
+                  <span>{isArabic ? link.ar : link.en}</span>
+                </Link>
+              </div>
+            )
+          })}
+        </nav>
       </aside>
     </>
   )
