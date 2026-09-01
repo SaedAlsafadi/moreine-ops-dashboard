@@ -1,4 +1,5 @@
-'use client'
+﻿'use client'
+import { Button } from '@/components/ui/Button'
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -108,7 +109,7 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
   function handleSave() {
     setError(null)
     if (!form.roast_batch_id || !form.produced_date || form.quantity_kg <= 0) {
-      setError(locale === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 'Please fill all required fields.')
+      setError(t('common.fillRequired'))
       return
     }
     // @ts-expect-error React 19
@@ -144,7 +145,7 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
   const handleImport = useCallback(async (rows: Record<string, string>[]) => {
     try {
       const count = await importRoastedStock(rows, batches[0]?.id ?? '')
-      setImportResult(locale === 'ar' ? `تم استيراد ${count} صفوف.` : `Imported ${count} rows.`)
+      setImportResult(t('common.importSuccess') + ' ' + count)
       router.refresh()
     } catch (e) {
       setImportResult(e instanceof Error ? e.message : 'Import failed')
@@ -165,7 +166,7 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
   const headers = [
     t('roastedInventory.producedDate'),
-    locale === 'ar' ? 'دفعة الحمص' : 'Batch',
+    t('roastedInventory.batch'),
     t('roastedInventory.state'),
     t('roastedInventory.channel'),
     t('roastedInventory.status'),
@@ -181,17 +182,16 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
           <CsvImport onImport={handleImport} label={t('roastedInventory.importCsv')}
             expectedColumns={['roast_batch_id', 'state', 'channel', 'quantity_kg', 'status', 'produced_date']} />
           <CsvExport data={exportData} filename="roasted-inventory.csv" label={t('roastedInventory.exportCsv')} />
-          <button onClick={openAdd}
-            className="px-4 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <Button onClick={openAdd} variant="primary" size="md">
             + {t('roastedInventory.addStock')}
-          </button>
+          </Button>
         </div>
       </div>
 
       {importResult && (
-        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('Import') || importResult.includes('استيراد') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('Import') || importResult.includes('Ø§Ø³ØªÙŠØ±Ø§Ø¯') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
           {importResult}
-          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>✕</button>
+          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>âœ•</button>
         </div>
       )}
 
@@ -214,7 +214,7 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
                 <tr key={row.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
                   <td className="py-4 px-4 text-sm font-semibold text-charcoal">{row.produced_date}</td>
                   <td className="py-4 px-4 text-sm text-charcoal">
-                    {row.roast_batches?.green_inventory?.lot_name ?? '—'}
+                    {row.roast_batches?.green_inventory?.lot_name ?? 'â€”'}
                     <div className="text-xs text-olive/50">{row.roast_batches?.roast_date}</div>
                   </td>
                   <td className="px-4 py-3 text-sm text-charcoal capitalize">{t(`roastedInventory.${row.state}`)}</td>
@@ -223,14 +223,12 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
                   <td className="px-4 py-3 text-sm font-medium text-charcoal">{row.quantity_kg} kg</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <button onClick={() => openEdit(row)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-cream hover:bg-cream-dark text-olive font-medium transition">
+                      <Button onClick={() => openEdit(row)} variant="secondary" size="sm">
                         {t('common.edit')}
-                      </button>
-                      <button onClick={() => setDeleteId(row.id)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 font-medium transition">
+                      </Button>
+                      <Button onClick={() => setDeleteId(row.id)} variant="danger" size="sm">
                         {t('common.delete')}
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -246,15 +244,15 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-olive mb-1">
-              {locale === 'ar' ? 'دفعة الحمص' : 'Roast Batch'} <span className="text-red-500">*</span>
+              {t('roastedInventory.roastBatch')} <span className="text-red-500">*</span>
             </label>
             <select value={form.roast_batch_id}
               onChange={e => setForm(p => ({ ...p, roast_batch_id: e.target.value }))}
               className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm">
-              <option value="">{locale === 'ar' ? 'اختر دفعة...' : 'Select batch...'}</option>
+              <option value="">{t('roastedInventory.selectBatch')}</option>
               {batches.map(b => (
                 <option key={b.id} value={b.id}>
-                  {b.roast_date} — {b.green_inventory?.lot_name ?? 'Unknown'}
+                  {b.roast_date} â€” {b.green_inventory?.lot_name ?? 'Unknown'}
                 </option>
               ))}
             </select>
@@ -336,32 +334,29 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button onClick={handleSave} disabled={isPending}
-              className="flex-1 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg font-medium text-sm transition disabled:opacity-60">
+            <Button onClick={handleSave} disabled={isPending} variant="primary" className="flex-1">
               {isPending ? t('common.loading') : t('common.save')}
-            </button>
-            <button onClick={() => setModalOpen(false)}
-              className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition">
+            </Button>
+            <Button onClick={() => setModalOpen(false)} variant="secondary" className="flex-1">
               {t('common.cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
 
       {/* Delete Confirm */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('common.delete')} size="sm">
-        <p className="text-sm text-charcoal mb-4">{locale === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure you want to delete this record?'}</p>
+        <p className="text-sm text-charcoal mb-4">{t('common.confirmDeleteGeneric')}</p>
         <div className="flex gap-3">
-          <button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending}
-            className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium text-sm transition disabled:opacity-60">
+          <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}
-          </button>
-          <button onClick={() => setDeleteId(null)}
-            className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition">
+          </Button>
+          <Button onClick={() => setDeleteId(null)} variant="secondary" className="flex-1">
             {t('common.cancel')}
-          </button>
+          </Button>
         </div>
       </Modal>
     </div>
   )
 }
+

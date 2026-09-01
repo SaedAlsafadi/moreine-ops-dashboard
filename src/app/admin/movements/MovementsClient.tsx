@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
+import { Button } from '@/components/ui/Button'
 
 import { useState, useMemo } from 'react'
 import { useLanguage } from '@/lib/i18n/context'
 import Badge from '@/components/ui/Badge'
-
 interface Movement {
   id: string
   date: string
@@ -66,7 +66,7 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-olive">{t('movements.title')}</h1>
         <span className="text-sm text-olive/60 bg-cream px-3 py-1.5 rounded-full">
-          {locale === 'ar' ? `${filtered.length} سجل` : `${filtered.length} records`}
+          {filtered.length} {t('movements.records')}
         </span>
       </div>
 
@@ -104,10 +104,9 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
           </div>
         </div>
         {(filterCategory !== 'all' || filterAction !== 'all' || filterFrom || filterTo) && (
-          <button onClick={clearFilters}
-            className="mt-3 text-xs text-sage hover:text-sage-dark underline">
-            {t('common.clear')} {locale === 'ar' ? 'الفلاتر' : 'filters'}
-          </button>
+          <Button onClick={clearFilters} variant="ghost" size="sm" className="mt-2">
+            {t('common.clear')} {t('movements.filters')}
+          </Button>
         )}
       </div>
 
@@ -145,7 +144,7 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
                   </td>
                   <td className="py-4 px-4">
                     <Badge
-                      label={m.category === 'green' ? '🌿 ' + (locale === 'ar' ? 'أخضر' : 'Green') : '☕ ' + (locale === 'ar' ? 'محمص' : 'Roasted')}
+                      label={m.category === 'green' ? 'ðŸŒ¿ ' + (t('movements.green')) : 'â˜• ' + (t('movements.roasted'))}
                       variant={m.category === 'green' ? 'green' : 'sage'}
                     />
                   </td>
@@ -153,11 +152,11 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
                     <Badge label={m.action} variant={actionVariant[m.action] ?? 'gray'} />
                   </td>
                   <td className="px-4 py-3 text-sm font-medium text-charcoal">
-                    {m.quantity_kg != null ? `${m.quantity_kg} kg` : '—'}
+                    {m.quantity_kg != null ? `${m.quantity_kg} kg` : 'â€”'}
                   </td>
-                  <td className="px-4 py-3 text-sm text-olive/70">{m.from_channel ?? '—'}</td>
-                  <td className="px-4 py-3 text-sm text-olive/70">{m.to_channel ?? '—'}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{m.note ?? '—'}</td>
+                  <td className="px-4 py-3 text-sm text-olive/70">{m.from_channel ?? 'â€”'}</td>
+                  <td className="px-4 py-3 text-sm text-olive/70">{m.to_channel ?? 'â€”'}</td>
+                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{m.note ?? 'â€”'}</td>
                 </tr>
               ))
             )}
@@ -167,3 +166,4 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
     </div>
   )
 }
+

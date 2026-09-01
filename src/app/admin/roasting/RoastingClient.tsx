@@ -1,4 +1,5 @@
 'use client'
+import { Button } from '@/components/ui/Button'
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
@@ -6,7 +7,6 @@ import { useLanguage } from '@/lib/i18n/context'
 import Modal from '@/components/ui/Modal'
 import CsvExport from '@/components/CsvExport'
 import { addRoastBatch, deleteRoastBatch, type RoastBatchInput } from '@/app/actions/roasting'
-
 interface GreenLot {
   id: string
   lot_name: string
@@ -43,16 +43,16 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
     notes: null,
   })
 
-  const yieldPct = form.input_kg > 0 ? ((form.output_kg / form.input_kg) * 100).toFixed(1) : '—'
+  const yieldPct = form.input_kg > 0 ? ((form.output_kg / form.input_kg) * 100).toFixed(1) : 'â€”'
 
   function handleSave() {
     setError(null)
     if (!form.green_lot_id || !form.roast_date || form.input_kg <= 0 || form.output_kg <= 0) {
-      setError(locale === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 'Please fill all required fields.')
+      setError(t('common.fillRequired'))
       return
     }
     if (form.output_kg > form.input_kg) {
-      setError(locale === 'ar' ? 'الإنتاج لا يمكن أن يتجاوز المدخلات.' : 'Output cannot exceed input.')
+      setError(t('roasting.outputExceedsInput'))
       return
     }
     // @ts-expect-error React 19
@@ -100,12 +100,12 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
         <h1 className="text-2xl font-bold text-olive">{t('roasting.title')}</h1>
         <div className="flex flex-wrap gap-2">
           <CsvExport data={exportData} filename="roast-batches.csv" label={t('roasting.exportCsv')} />
-          <button
+          <Button
             onClick={() => { setError(null); setModalOpen(true) }}
-            className="px-4 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg text-sm font-medium transition shadow-sm"
+            variant="primary" size="md"
           >
             + {t('roasting.newBatch')}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -138,24 +138,21 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
                 <tr key={batch.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
                   <td className="py-4 px-4 text-sm font-semibold text-charcoal whitespace-nowrap">{batch.roast_date}</td>
                   <td className="py-4 px-4 text-sm text-charcoal">
-                    <div>{batch.green_inventory?.lot_name ?? '—'}</div>
+                    <div>{batch.green_inventory?.lot_name ?? 'â€”'}</div>
                     <div className="text-xs text-olive/60">{batch.green_inventory?.origin ?? ''}</div>
                   </td>
                   <td className="px-4 py-3 text-sm text-charcoal">{batch.input_kg} kg</td>
                   <td className="px-4 py-3 text-sm text-charcoal">{batch.output_kg} kg</td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`font-medium ${(batch.yield_pct ?? 0) >= 85 ? 'text-green-600' : (batch.yield_pct ?? 0) >= 82 ? 'text-olive' : 'text-amber-600'}`}>
-                      {batch.yield_pct != null ? `${batch.yield_pct}%` : '—'}
+                      {batch.yield_pct != null ? `${batch.yield_pct}%` : 'â€”'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{batch.notes ?? '—'}</td>
+                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{batch.notes ?? 'â€”'}</td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => setDeleteId(batch.id)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 font-medium transition"
-                    >
+                    <Button onClick={() => setDeleteId(batch.id)} variant="danger" size="sm">
                       {t('common.delete')}
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))
@@ -176,16 +173,16 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
               onChange={e => setForm(p => ({ ...p, green_lot_id: e.target.value }))}
               className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
             >
-              <option value="">{locale === 'ar' ? 'اختر دفعة خضراء...' : 'Select a green lot...'}</option>
+              <option value="">{t('roasting.selectGreenLot')}</option>
               {greenLots.map(l => (
                 <option key={l.id} value={l.id}>
-                  {l.lot_name} ({l.remaining_kg} kg {locale === 'ar' ? 'متبقي' : 'available'})
+                  {l.lot_name} ({l.remaining_kg} kg {t('roasting.available')})
                 </option>
               ))}
             </select>
             {selectedLot && (
               <p className="text-xs text-olive/60 mt-1">
-                {locale === 'ar' ? `المتاح: ${selectedLot.remaining_kg} كجم` : `Available: ${selectedLot.remaining_kg} kg`}
+                {t('roasting.availableShort')} {selectedLot.remaining_kg} {t('dashboard.kg')}
               </p>
             )}
           </div>
@@ -234,7 +231,7 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
           {/* Yield auto-calculated display */}
           <div className="bg-cream rounded-lg px-4 py-3 flex items-center justify-between">
             <span className="text-sm text-olive">{t('roasting.yieldPct')}</span>
-            <span className="text-lg font-bold text-sage">{yieldPct}{yieldPct !== '—' ? '%' : ''}</span>
+            <span className="text-lg font-bold text-sage">{yieldPct}{yieldPct !== 'â€”' ? '%' : ''}</span>
           </div>
 
           <div>
@@ -250,19 +247,12 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
           {error && <p className="text-red-600 text-sm">{error}</p>}
 
           <div className="flex gap-3 pt-2">
-            <button
-              onClick={handleSave}
-              disabled={isPending}
-              className="flex-1 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg font-medium text-sm transition disabled:opacity-60"
-            >
+            <Button onClick={handleSave} disabled={isPending} variant="primary" className="flex-1">
               {isPending ? t('common.loading') : t('common.save')}
-            </button>
-            <button
-              onClick={() => setModalOpen(false)}
-              className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition"
-            >
+            </Button>
+            <Button onClick={() => setModalOpen(false)} variant="secondary" className="flex-1">
               {t('common.cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -270,19 +260,18 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
       {/* Delete Confirm */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('common.delete')} size="sm">
         <p className="text-sm text-charcoal mb-4">
-          {locale === 'ar' ? 'هل أنت متأكد من حذف هذه الدفعة؟' : 'Are you sure you want to delete this batch?'}
+          {t('roasting.confirmDeleteBatch')}
         </p>
         <div className="flex gap-3">
-          <button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending}
-            className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium text-sm transition disabled:opacity-60">
+          <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}
-          </button>
-          <button onClick={() => setDeleteId(null)}
-            className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition">
+          </Button>
+          <Button onClick={() => setDeleteId(null)} variant="secondary" className="flex-1">
             {t('common.cancel')}
-          </button>
+          </Button>
         </div>
       </Modal>
     </div>
   )
 }
+

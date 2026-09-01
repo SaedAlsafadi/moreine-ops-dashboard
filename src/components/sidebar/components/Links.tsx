@@ -1,12 +1,14 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 import React from 'react';
-import { useCallback } from 'react';
+import { useCallback } from 'react'
+import { useLanguage } from '@/lib/i18n/context';
 import { usePathname } from 'next/navigation';
 import NavLink from 'components/link/NavLink';
 import DashIcon from 'components/icons/DashIcon';
 // chakra imports
 
 export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
+  const { t } = useLanguage()
   // Chakra color mode
   const pathname = usePathname();
 
@@ -50,7 +52,7 @@ export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
                       : 'font-medium text-gray-600'
                   }`}
                 >
-                  {route.name}
+                  {route.path === 'green-inventory' ? t('nav.greenInventory') : route.path === 'roasted-inventory' ? t('nav.roastedInventory') : t('nav.' + route.path)}
                 </p>
               </li>
               {activeRoute(route.path) ? (
@@ -67,3 +69,6 @@ export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
 };
 
 export default SidebarLinks;
+
+
+

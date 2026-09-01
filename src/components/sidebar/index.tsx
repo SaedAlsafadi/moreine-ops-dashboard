@@ -21,10 +21,10 @@ function SidebarHorizon(props: { routes: IRoute[]; [x: string]: any }) {
         <HiX />
       </span>
 
-      <div className={`mx-[56px] mt-[40px] mb-[20px] flex items-center justify-center`}>
-        <img src="/logo-dark.png" alt="Moreine" className="h-14 object-contain dark:hidden" />
-        <img src="/logo-white.png" alt="Moreine" className="h-14 object-contain hidden dark:block" />
-      </div>
+        <div className={`mt-[40px] mb-[30px] flex h-16 w-full items-center justify-center px-4`}>
+          <img src="/logo-dark.png" alt="Moreine" className="h-full w-auto object-contain dark:hidden" />
+          <img src="/logo-white.png" alt="Moreine" className="h-full w-auto object-contain hidden dark:block" />
+        </div>
       <div className="mb-7 h-px bg-gray-300 dark:bg-white/30" />
       {/* Nav item */}
 

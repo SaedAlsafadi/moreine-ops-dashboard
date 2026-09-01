@@ -6,6 +6,7 @@ import {
   MdLocalCafe,
   MdPointOfSale,
   MdSwapHoriz,
+  MdSettings,
 } from 'react-icons/md'
 
 // We will use standard React Icons for the sidebar
@@ -46,6 +47,12 @@ const routes = [
     layout: '/admin',
     path: 'movements',
     icon: <MdSwapHoriz className="h-6 w-6" />,
+  },
+  {
+    name: 'Settings',
+    layout: '/admin',
+    path: 'settings',
+    icon: <MdSettings className="h-6 w-6" />,
   },
 ]
 

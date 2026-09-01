@@ -1,77 +1,13 @@
-// =========================================================
-// Moreine Ops Dashboard — i18n translations
-// =========================================================
+﻿export type Locale = 'en' | 'ar'
 
-export type Locale = 'en' | 'ar'
-
-// Flat dot-notation union of every leaf key
-export type TranslationKey =
-  // nav
-  | 'nav.dashboard' | 'nav.greenInventory' | 'nav.roasting'
-  | 'nav.roastedInventory' | 'nav.sales' | 'nav.movements'
-  | 'nav.signOut' | 'nav.language'
-  // dashboard
-  | 'dashboard.title' | 'dashboard.totalGreenStock' | 'dashboard.roastedStock'
-  | 'dashboard.lowStockAlerts' | 'dashboard.avgYield' | 'dashboard.recentActivity'
-  | 'dashboard.noAlerts' | 'dashboard.viewAll' | 'dashboard.bulk'
-  | 'dashboard.packed' | 'dashboard.kg'
-  // greenInventory
-  | 'greenInventory.title' | 'greenInventory.addLot' | 'greenInventory.editLot'
-  | 'greenInventory.deleteLot' | 'greenInventory.lotName' | 'greenInventory.origin'
-  | 'greenInventory.supplier' | 'greenInventory.arrivalDate'
-  | 'greenInventory.initialKg' | 'greenInventory.remainingKg'
-  | 'greenInventory.costPerKg' | 'greenInventory.notes'
-  | 'greenInventory.confirmDelete' | 'greenInventory.importCsv'
-  | 'greenInventory.exportCsv' | 'greenInventory.actions'
-  // roasting
-  | 'roasting.title' | 'roasting.newBatch' | 'roasting.editBatch'
-  | 'roasting.greenLot' | 'roasting.roastDate' | 'roasting.inputKg'
-  | 'roasting.outputKg' | 'roasting.yieldPct' | 'roasting.notes'
-  | 'roasting.exportCsv'
-  // roastedInventory
-  | 'roastedInventory.title' | 'roastedInventory.addStock'
-  | 'roastedInventory.editStock' | 'roastedInventory.state'
-  | 'roastedInventory.channel' | 'roastedInventory.quantity'
-  | 'roastedInventory.packageSize' | 'roastedInventory.unitCount'
-  | 'roastedInventory.status' | 'roastedInventory.producedDate'
-  | 'roastedInventory.notes' | 'roastedInventory.importCsv'
-  | 'roastedInventory.exportCsv' | 'roastedInventory.bulk'
-  | 'roastedInventory.packed' | 'roastedInventory.unallocated'
-  | 'roastedInventory.bar' | 'roastedInventory.b2c' | 'roastedInventory.b2b'
-  | 'roastedInventory.inStock' | 'roastedInventory.shipped'
-  | 'roastedInventory.sold' | 'roastedInventory.consumed'
-  // sales
-  | 'sales.title' | 'sales.addSale' | 'sales.date' | 'sales.channel'
-  | 'sales.productDescription' | 'sales.quantity' | 'sales.unit'
-  | 'sales.revenue' | 'sales.source' | 'sales.filterByChannel'
-  | 'sales.all' | 'sales.importCsv' | 'sales.exportCsv'
-  | 'sales.manual' | 'sales.salla' | 'sales.rewaa'
-  | 'sales.kg' | 'sales.units'
-  // movements
-  | 'movements.title' | 'movements.date' | 'movements.category'
-  | 'movements.action' | 'movements.quantity' | 'movements.fromChannel'
-  | 'movements.toChannel' | 'movements.note' | 'movements.filterCategory'
-  | 'movements.filterAction' | 'movements.filterDateFrom'
-  | 'movements.filterDateTo' | 'movements.green' | 'movements.roasted'
-  | 'movements.all'
-  // common
-  | 'common.save' | 'common.cancel' | 'common.delete' | 'common.edit'
-  | 'common.add' | 'common.loading' | 'common.error' | 'common.success'
-  | 'common.noData' | 'common.search' | 'common.filter' | 'common.clear'
-  | 'common.close' | 'common.confirm' | 'common.yes' | 'common.no'
-  // channels
-  | 'channels.unallocated' | 'channels.bar' | 'channels.b2c' | 'channels.b2b'
-  // actions
-  | 'actions.received' | 'actions.roasted_out' | 'actions.roasted_in'
-  | 'actions.packed' | 'actions.allocated' | 'actions.transferred'
-  | 'actions.sold' | 'actions.consumed' | 'actions.adjusted'
-
-// Deeply-nested structure type (mirrors the translation objects below)
-export type TranslationShape = {
+export interface TranslationShape {
   nav: {
     dashboard: string; greenInventory: string; roasting: string
     roastedInventory: string; sales: string; movements: string
-    signOut: string; language: string
+    signOut: string; language: string; settings: string
+  }
+  settings: {
+    title: string; language: string; settings: string; theme: string; english: string; arabic: string; lightMode: string; darkMode: string
   }
   dashboard: {
     title: string; totalGreenStock: string; roastedStock: string
@@ -85,24 +21,25 @@ export type TranslationShape = {
     confirmDelete: string; importCsv: string; exportCsv: string; actions: string
   }
   roasting: {
-    title: string; newBatch: string; editBatch: string; greenLot: string
-    roastDate: string; inputKg: string; outputKg: string; yieldPct: string
-    notes: string; exportCsv: string
+    title: string; newBatch: string; editBatch: string
+    greenLot: string; roastDate: string; inputKg: string; outputKg: string
+    yieldPct: string; notes: string; exportCsv: string
   }
   roastedInventory: {
-    title: string; addStock: string; editStock: string; state: string
-    channel: string; quantity: string; packageSize: string; unitCount: string
-    status: string; producedDate: string; notes: string; importCsv: string
-    exportCsv: string; bulk: string; packed: string; unallocated: string
-    bar: string; b2c: string; b2b: string; inStock: string; shipped: string
+    title: string; addStock: string; editStock: string
+    state: string; channel: string; quantity: string; packageSize: string
+    unitCount: string; status: string; producedDate: string; notes: string
+    importCsv: string; exportCsv: string
+    bulk: string; packed: string; unallocated: string; bar: string
+    b2c: string; b2b: string; inStock: string; shipped: string
     sold: string; consumed: string
   }
   sales: {
     title: string; addSale: string; date: string; channel: string
     productDescription: string; quantity: string; unit: string; revenue: string
-    source: string; filterByChannel: string; all: string; importCsv: string
-    exportCsv: string; manual: string; salla: string; rewaa: string
-    kg: string; units: string
+    source: string; filterByChannel: string; all: string
+    importCsv: string; exportCsv: string
+    manual: string; salla: string; rewaa: string; kg: string; units: string
   }
   movements: {
     title: string; date: string; category: string; action: string
@@ -120,15 +57,12 @@ export type TranslationShape = {
     unallocated: string; bar: string; b2c: string; b2b: string
   }
   actions: {
-    received: string; roasted_out: string; roasted_in: string; packed: string
-    allocated: string; transferred: string; sold: string; consumed: string
-    adjusted: string
+    received: string; roasted_out: string; roasted_in: string
+    packed: string; allocated: string; transferred: string
+    sold: string; consumed: string; adjusted: string
   }
 }
 
-// =========================================================
-// English translations
-// =========================================================
 const en: TranslationShape = {
   nav: {
     dashboard:       'Dashboard',
@@ -139,6 +73,7 @@ const en: TranslationShape = {
     movements:       'Movements',
     signOut:         'Sign Out',
     language:        'Language',
+    settings:        'Settings',
   },
   dashboard: {
     title:           'Operations Dashboard',
@@ -147,14 +82,19 @@ const en: TranslationShape = {
     lowStockAlerts:  'Low-Stock Alerts',
     avgYield:        'Avg. Roast Yield',
     recentActivity:  'Recent Activity',
-    noAlerts:        'No low-stock alerts',
-    viewAll:         'View all',
+    noAlerts:        'No low stock alerts',
+    viewAll:         'View All',
     bulk:            'Bulk',
     packed:          'Packed',
     kg:              'kg',
+    greenCoffeeStock: 'Green Coffee Stock',
+    averageYield: 'Average Yield',
+    alerts: 'Alerts',
+    noAlertsMsg: 'No alerts.',
+    noDataMsg: 'No data.',
   },
   greenInventory: {
-    title:         'Green Coffee Inventory',
+    title:         'Green Inventory',
     addLot:        'Add Lot',
     editLot:       'Edit Lot',
     deleteLot:     'Delete Lot',
@@ -166,10 +106,11 @@ const en: TranslationShape = {
     remainingKg:   'Remaining (kg)',
     costPerKg:     'Cost / kg',
     notes:         'Notes',
-    confirmDelete: 'Are you sure you want to delete this lot? This action cannot be undone.',
+    confirmDelete: 'Are you sure you want to delete this lot? This cannot be undone.',
     importCsv:     'Import CSV',
     exportCsv:     'Export CSV',
     actions:       'Actions',
+    low: 'Low',
   },
   roasting: {
     title:      'Roasting Batches',
@@ -182,15 +123,20 @@ const en: TranslationShape = {
     yieldPct:   'Yield %',
     notes:      'Notes',
     exportCsv:  'Export CSV',
+    outputExceedsInput: 'Output cannot exceed input.',
+    selectGreenLot: 'Select a green lot...',
+    available: 'available',
+    availableShort: 'Available:',
+    confirmDeleteBatch: 'Are you sure you want to delete this batch?',
   },
   roastedInventory: {
-    title:        'Roasted Coffee Inventory',
+    title:        'Roasted Inventory',
     addStock:     'Add Stock',
     editStock:    'Edit Stock',
     state:        'State',
     channel:      'Channel',
     quantity:     'Quantity',
-    packageSize:  'Package Size (kg)',
+    packageSize:  'Package Size (g)',
     unitCount:    'Unit Count',
     status:       'Status',
     producedDate: 'Produced Date',
@@ -207,9 +153,12 @@ const en: TranslationShape = {
     shipped:      'Shipped',
     sold:         'Sold',
     consumed:     'Consumed',
+    batch: 'Batch',
+    roastBatch: 'Roast Batch',
+    selectBatch: 'Select batch...',
   },
   sales: {
-    title:             'Sales',
+    title:             'Sales Log',
     addSale:           'Add Sale',
     date:              'Date',
     channel:           'Channel',
@@ -218,7 +167,7 @@ const en: TranslationShape = {
     unit:              'Unit',
     revenue:           'Revenue (SAR)',
     source:            'Source',
-    filterByChannel:   'Filter by channel',
+    filterByChannel:   'Filter by Channel',
     all:               'All',
     importCsv:         'Import CSV',
     exportCsv:         'Export CSV',
@@ -226,10 +175,14 @@ const en: TranslationShape = {
     salla:             'Salla',
     rewaa:             'Rewaa',
     kg:                'kg',
-    units:             'units',
+    units:             'Units',
+    entries: 'entries',
+    revenuePrefix: 'Revenue:',
+    externalOrderId: 'External Order ID (optional)',
+    confirmDeleteSale: 'Delete this sale record?',
   },
   movements: {
-    title:          'Inventory Movements',
+    title:          'Stock Movements',
     date:           'Date',
     category:       'Category',
     action:         'Action',
@@ -237,13 +190,15 @@ const en: TranslationShape = {
     fromChannel:    'From Channel',
     toChannel:      'To Channel',
     note:           'Note',
-    filterCategory: 'Filter by category',
-    filterAction:   'Filter by action',
-    filterDateFrom: 'From date',
-    filterDateTo:   'To date',
+    filterCategory: 'Filter Category',
+    filterAction:   'Filter Action',
+    filterDateFrom: 'Date From',
+    filterDateTo:   'Date To',
     green:          'Green',
     roasted:        'Roasted',
     all:            'All',
+    records: 'records',
+    filters: 'filters',
   },
   common: {
     save:    'Save',
@@ -251,7 +206,7 @@ const en: TranslationShape = {
     delete:  'Delete',
     edit:    'Edit',
     add:     'Add',
-    loading: 'Loading…',
+    loading: 'Loading...',
     error:   'An error occurred.',
     success: 'Saved successfully.',
     noData:  'No data to display.',
@@ -262,6 +217,9 @@ const en: TranslationShape = {
     confirm: 'Confirm',
     yes:     'Yes',
     no:      'No',
+    fillRequired: 'Please fill all required fields.',
+    importSuccess: 'Imported successfully.',
+    confirmDeleteGeneric: 'Are you sure you want to delete this record?',
   },
   channels: {
     unallocated: 'Unallocated',
@@ -282,32 +240,35 @@ const en: TranslationShape = {
   },
 }
 
-// =========================================================
-// Arabic translations
-// =========================================================
 const ar: TranslationShape = {
   nav: {
-    dashboard:       'لوحة التحكم',
+    dashboard:       'لوحة القيادة',
     greenInventory:  'مخزون البن الأخضر',
     roasting:        'التحميص',
     roastedInventory:'مخزون البن المحمص',
     sales:           'المبيعات',
-    movements:       'حركات المخزون',
+    movements:       'حركة المخزون',
     signOut:         'تسجيل الخروج',
     language:        'اللغة',
+    settings:        'الإعدادات',
   },
   dashboard: {
     title:           'لوحة العمليات',
-    totalGreenStock: 'إجمالي مخزون البن الأخضر',
-    roastedStock:    'مخزون البن المحمص',
+    totalGreenStock: 'إجمالي البن الأخضر',
+    roastedStock:    'البن المحمص',
     lowStockAlerts:  'تنبيهات نقص المخزون',
     avgYield:        'متوسط نسبة التحميص',
-    recentActivity:  'آخر الأنشطة',
+    recentActivity:  'النشاط الأخير',
     noAlerts:        'لا توجد تنبيهات نقص مخزون',
     viewAll:         'عرض الكل',
-    bulk:            'سائب',
+    bulk:            'جملة',
     packed:          'معبأ',
-    kg:              'كغ',
+    kg:              'كجم',
+    greenCoffeeStock: 'مخزون البن الأخضر',
+    averageYield: 'متوسط نسبة التحميص',
+    alerts: 'تنبيهات',
+    noAlertsMsg: 'لا توجد تنبيهات.',
+    noDataMsg: 'لا توجد بيانات.',
   },
   greenInventory: {
     title:         'مخزون البن الأخضر',
@@ -315,29 +276,35 @@ const ar: TranslationShape = {
     editLot:       'تعديل الدفعة',
     deleteLot:     'حذف الدفعة',
     lotName:       'اسم الدفعة',
-    origin:        'المنشأ',
+    origin:        'المصدر',
     supplier:      'المورد',
     arrivalDate:   'تاريخ الوصول',
-    initialKg:     'الكمية الأولية (كغ)',
-    remainingKg:   'الكمية المتبقية (كغ)',
-    costPerKg:     'التكلفة / كغ',
+    initialKg:     'الكمية الأولية (كجم)',
+    remainingKg:   'الكمية المتبقية (كجم)',
+    costPerKg:     'التكلفة / كجم',
     notes:         'ملاحظات',
     confirmDelete: 'هل أنت متأكد من حذف هذه الدفعة؟ لا يمكن التراجع عن هذا الإجراء.',
     importCsv:     'استيراد CSV',
     exportCsv:     'تصدير CSV',
     actions:       'الإجراءات',
+    low: 'منخفض',
   },
   roasting: {
     title:      'دفعات التحميص',
     newBatch:   'دفعة جديدة',
     editBatch:  'تعديل الدفعة',
-    greenLot:   'دفعة البن الأخضر',
+    greenLot:   'الدفعة الخضراء',
     roastDate:  'تاريخ التحميص',
-    inputKg:    'الكمية المُدخلة (كغ)',
-    outputKg:   'الكمية الناتجة (كغ)',
-    yieldPct:   'نسبة الناتج %',
+    inputKg:    'الكمية المدخلة (كجم)',
+    outputKg:   'الكمية الناتجة (كجم)',
+    yieldPct:   'نسبة الإنتاج %',
     notes:      'ملاحظات',
     exportCsv:  'تصدير CSV',
+    outputExceedsInput: 'الناتج لا يمكن أن يتجاوز المدخل.',
+    selectGreenLot: 'اختر دفعة خضراء...',
+    available: 'متاح',
+    availableShort: 'المتاح:',
+    confirmDeleteBatch: 'هل أنت متأكد من حذف هذه الدفعة؟',
   },
   roastedInventory: {
     title:        'مخزون البن المحمص',
@@ -346,23 +313,26 @@ const ar: TranslationShape = {
     state:        'الحالة الفيزيائية',
     channel:      'القناة',
     quantity:     'الكمية',
-    packageSize:  'حجم العبوة (كغ)',
+    packageSize:  'حجم العبوة (جم)',
     unitCount:    'عدد الوحدات',
     status:       'الحالة',
     producedDate: 'تاريخ الإنتاج',
     notes:        'ملاحظات',
     importCsv:    'استيراد CSV',
     exportCsv:    'تصدير CSV',
-    bulk:         'سائب',
+    bulk:         'جملة',
     packed:       'معبأ',
     unallocated:  'غير مخصص',
     bar:          'البار',
-    b2c:          'أون لاين / تجزئة',
-    b2b:          'عملاء الجملة',
+    b2c:          'أفراد / قطاع التجزئة',
+    b2b:          'مبيعات الجملة',
     inStock:      'في المخزون',
     shipped:      'تم الشحن',
     sold:         'مباع',
     consumed:     'مستهلك',
+    batch: 'دفعة',
+    roastBatch: 'دفعة التحميص',
+    selectBatch: 'اختر دفعة...',
   },
   sales: {
     title:             'المبيعات',
@@ -372,7 +342,7 @@ const ar: TranslationShape = {
     productDescription:'وصف المنتج',
     quantity:          'الكمية',
     unit:              'الوحدة',
-    revenue:           'الإيراد (ر.س)',
+    revenue:           'الإيرادات (ر.س)',
     source:            'المصدر',
     filterByChannel:   'تصفية حسب القناة',
     all:               'الكل',
@@ -380,12 +350,16 @@ const ar: TranslationShape = {
     exportCsv:         'تصدير CSV',
     manual:            'يدوي',
     salla:             'سلة',
-    rewaa:             'رِواء',
-    kg:                'كغ',
+    rewaa:             'رواء',
+    kg:                'كجم',
     units:             'وحدات',
+    entries: 'سجل',
+    revenuePrefix: 'الإيرادات:',
+    externalOrderId: 'رقم الطلب الخارجي (اختياري)',
+    confirmDeleteSale: 'هل أنت متأكد من حذف هذا السجل؟',
   },
   movements: {
-    title:          'حركات المخزون',
+    title:          'حركة المخزون',
     date:           'التاريخ',
     category:       'الفئة',
     action:         'الإجراء',
@@ -400,6 +374,8 @@ const ar: TranslationShape = {
     green:          'أخضر',
     roasted:        'محمص',
     all:            'الكل',
+    records: 'سجل',
+    filters: 'فلاتر',
   },
   common: {
     save:    'حفظ',
@@ -407,10 +383,10 @@ const ar: TranslationShape = {
     delete:  'حذف',
     edit:    'تعديل',
     add:     'إضافة',
-    loading: 'جارٍ التحميل…',
+    loading: 'جاري التحميل...',
     error:   'حدث خطأ.',
     success: 'تم الحفظ بنجاح.',
-    noData:  'لا توجد بيانات للعرض.',
+    noData:  'لا توجد بيانات لعرضها.',
     search:  'بحث',
     filter:  'تصفية',
     clear:   'مسح',
@@ -418,40 +394,33 @@ const ar: TranslationShape = {
     confirm: 'تأكيد',
     yes:     'نعم',
     no:      'لا',
+    fillRequired: 'يرجى ملء جميع الحقول المطلوبة.',
+    importSuccess: 'تم الاستيراد بنجاح.',
+    confirmDeleteGeneric: 'هل أنت متأكد من حذف هذا السجل؟',
   },
   channels: {
     unallocated: 'غير مخصص',
     bar:         'البار',
-    b2c:         'أون لاين / تجزئة',
-    b2b:         'عملاء الجملة',
+    b2c:         'أفراد / قطاع التجزئة',
+    b2b:         'مبيعات الجملة',
   },
   actions: {
-    received:   'استُلم',
-    roasted_out:'خرج للتحميص',
-    roasted_in: 'دخل من التحميص',
-    packed:     'عُبِّئ',
-    allocated:  'خُصِّص',
-    transferred:'نُقِل',
-    sold:       'بِيع',
-    consumed:   'استُهلك',
-    adjusted:   'عُدِّل',
+    received:   'مستلم',
+    roasted_out:'مستهلك للتحميص',
+    roasted_in: 'ناتج من التحميص',
+    packed:     'مُعبأ',
+    allocated:  'مُخصص',
+    transferred:'منقول',
+    sold:       'مُباع',
+    consumed:   'مُستهلك',
+    adjusted:   'مُعدل',
   },
 }
 
-// =========================================================
-// Exports
-// =========================================================
 export const translations: Record<Locale, TranslationShape> = { en, ar }
 
-/**
- * Look up a dot-notation translation key for the given locale.
- * Falls back to returning the key itself if not found.
- *
- * @example t('en', 'nav.dashboard') // => 'Dashboard'
- */
 export function t(locale: Locale, key: string): string {
   const keys = key.split('.')
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = translations[locale]
   for (const k of keys) {
     if (current === undefined || current === null) return key
@@ -459,3 +428,8 @@ export function t(locale: Locale, key: string): string {
   }
   return typeof current === 'string' ? current : key
 }
+
+
+
+
+

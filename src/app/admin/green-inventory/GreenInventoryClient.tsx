@@ -1,4 +1,5 @@
-'use client'
+﻿'use client'
+import { Button } from '@/components/ui/Button'
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -54,6 +55,17 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
   const [error, setError] = useState<string | null>(null)
   const [importResult, setImportResult] = useState<string | null>(null)
 
+  const headers = [
+    t('greenInventory.lotName'),
+    t('greenInventory.origin'),
+    t('greenInventory.supplier'),
+    t('greenInventory.arrivalDate'),
+    t('greenInventory.initialKg'),
+    t('greenInventory.remainingKg'),
+    t('greenInventory.costPerKg'),
+    t('greenInventory.actions'),
+  ]
+
   function openAdd() {
     setEditingLot(null)
     setForm(EMPTY_FORM)
@@ -84,7 +96,7 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
   function handleSave() {
     setError(null)
     if (!form.lot_name || !form.origin || !form.supplier || !form.arrival_date || !form.initial_kg) {
-      setError(locale === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 'Please fill all required fields.')
+      setError(t('common.fillRequired'))
       return
     }
     // @ts-expect-error React 19
@@ -120,7 +132,7 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
   const handleImport = useCallback(async (rows: Record<string, string>[]) => {
     try {
       const count = await importGreenLots(rows)
-      setImportResult(locale === 'ar' ? `تم استيراد ${count} صفوف بنجاح.` : `Successfully imported ${count} rows.`)
+      setImportResult(t('common.importSuccess') + ' ' + count)
       router.refresh()
     } catch (e) {
       setImportResult(e instanceof Error ? e.message : 'Import failed')
@@ -140,19 +152,16 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
             expectedColumns={['lot_name', 'origin', 'supplier', 'arrival_date', 'initial_kg', 'remaining_kg', 'cost_per_kg', 'notes']}
           />
           <CsvExport data={exportData} filename="green-inventory.csv" label={t('greenInventory.exportCsv')} />
-          <button
-            onClick={openAdd}
-            className="px-4 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg text-sm font-medium transition shadow-sm"
-          >
+          <Button onClick={openAdd} variant="primary" size="md">
             + {t('greenInventory.addLot')}
-          </button>
+          </Button>
         </div>
       </div>
 
       {importResult && (
-        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('import') || importResult.includes('استيراد') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('import') || importResult.includes('Ø§Ø³ØªÙŠØ±Ø§Ø¯') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
           {importResult}
-          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>✕</button>
+          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>âœ•</button>
         </div>
       )}
 
@@ -183,26 +192,20 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
                       {lot.remaining_kg} kg
                     </span>
                     {lot.remaining_kg < lowStockThreshold && (
-                      <Badge label={locale === 'ar' ? 'منخفض' : 'Low'} variant="yellow" />
+                      <Badge label={t('greenInventory.low')} variant="yellow" />
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-charcoal">
-                    {lot.cost_per_kg != null ? `$${lot.cost_per_kg}/kg` : '—'}
+                    {lot.cost_per_kg != null ? `$${lot.cost_per_kg}/kg` : 'â€”'}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => openEdit(lot)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-cream hover:bg-cream-dark text-olive font-medium transition"
-                      >
+                      <Button onClick={() => openEdit(lot)} variant="secondary" size="sm">
                         {t('common.edit')}
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(lot.id)}
-                        className="text-xs px-3 py-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 font-medium transition"
-                      >
+                      </Button>
+                      <Button onClick={() => setDeleteId(lot.id)} variant="danger" size="sm">
                         {t('common.delete')}
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -248,19 +251,12 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button
-              onClick={handleSave}
-              disabled={isPending}
-              className="flex-1 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg font-medium text-sm transition disabled:opacity-60"
-            >
+            <Button onClick={handleSave} disabled={isPending} variant="primary" className="flex-1">
               {isPending ? t('common.loading') : t('common.save')}
-            </button>
-            <button
-              onClick={() => setModalOpen(false)}
-              className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition"
-            >
+            </Button>
+            <Button onClick={() => setModalOpen(false)} variant="secondary" className="flex-1">
               {t('common.cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -269,21 +265,15 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('greenInventory.deleteLot')} size="sm">
         <p className="text-sm text-charcoal mb-4">{t('greenInventory.confirmDelete')}</p>
         <div className="flex gap-3">
-          <button
-            onClick={() => deleteId && handleDelete(deleteId)}
-            disabled={isPending}
-            className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium text-sm transition disabled:opacity-60"
-          >
+          <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}
-          </button>
-          <button
-            onClick={() => setDeleteId(null)}
-            className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition"
-          >
+          </Button>
+          <Button onClick={() => setDeleteId(null)} variant="secondary" className="flex-1">
             {t('common.cancel')}
-          </button>
+          </Button>
         </div>
       </Modal>
     </div>
   )
 }
+

@@ -1,10 +1,11 @@
-import { createClient } from '@/lib/supabase/server'
+﻿import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import Widget from '@/components/widget/Widget'
 import { MdInventory, MdLocalCafe, MdWarning, MdTrendingUp } from 'react-icons/md'
 import Card from '@/components/card'
 import React from 'react'
+import { t } from '@/lib/i18n/translations'
 
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
@@ -59,22 +60,22 @@ export default async function DashboardPage() {
       <div className="mt-3 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4">
         <Widget
           icon={<MdInventory className="h-7 w-7" />}
-          title={locale === 'ar' ? 'مخزون القهوة الخضراء' : 'Green Coffee Stock'}
+          title={t(locale as any, 'dashboard.greenCoffeeStock')}
           subtitle={`${totalGreenKg.toLocaleString()} kg`}
         />
         <Widget
           icon={<MdLocalCafe className="h-7 w-7" />}
-          title={locale === 'ar' ? 'المخزون المحمص' : 'Roasted Stock'}
+          title={t(locale as any, 'dashboard.roastedStock')}
           subtitle={`${totalRoastedKg.toLocaleString()} kg`}
         />
         <Widget
           icon={<MdTrendingUp className="h-7 w-7" />}
-          title={locale === 'ar' ? 'متوسط نسبة الحمص' : 'Average Yield'}
+          title={t(locale as any, 'dashboard.averageYield')}
           subtitle={`${avgYield.toFixed(1)}%`}
         />
         <Widget
           icon={<MdWarning className={`h-7 w-7 ${hasAlerts ? 'text-amber-500' : 'text-green-500'}`} />}
-          title={locale === 'ar' ? 'تنبيهات المخزون المنخفض' : 'Low Stock Alerts'}
+          title={t(locale as any, 'dashboard.lowStockAlerts')}
           subtitle={(lowGreenLots.length + channelTotals.length).toString()}
         />
       </div>
@@ -83,12 +84,12 @@ export default async function DashboardPage() {
         <Card extra="p-5">
           <header className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-navy-700 dark:text-white">
-              {locale === 'ar' ? 'تنبيهات' : 'Alerts'}
+              {t(locale as any, 'dashboard.alerts')}
             </h2>
           </header>
           <div className="mt-4 flex flex-col gap-3">
             {!hasAlerts ? (
-              <p className="text-sm text-gray-600">{locale === 'ar' ? 'لا توجد تنبيهات.' : 'No alerts.'}</p>
+              <p className="text-sm text-gray-600">{t(locale as any, 'dashboard.noAlertsMsg')}</p>
             ) : (
               <>
                 {lowGreenLots.map(l => (
@@ -109,12 +110,12 @@ export default async function DashboardPage() {
         <Card extra="p-5">
           <header className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-navy-700 dark:text-white">
-              {locale === 'ar' ? 'الأنشطة الأخيرة' : 'Recent Activity'}
+              {t(locale as any, 'dashboard.recentActivity')}
             </h2>
           </header>
           <div className="mt-4 flex flex-col gap-3">
             {(recentMovements ?? []).length === 0 ? (
-              <p className="text-sm text-gray-600">{locale === 'ar' ? 'لا توجد بيانات.' : 'No data.'}</p>
+              <p className="text-sm text-gray-600">{t(locale as any, 'dashboard.noDataMsg')}</p>
             ) : (
               recentMovements!.map(m => (
                 <div key={m.id} className="flex items-center justify-between border-b border-gray-200 pb-3 last:border-none dark:border-navy-700">
@@ -136,3 +137,4 @@ export default async function DashboardPage() {
     </div>
   )
 }
+

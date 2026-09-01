@@ -1,4 +1,4 @@
-{
+﻿{
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "src/types"],
     "target": "es2016",
@@ -32,7 +32,7 @@
     ],
     "strict": false
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "horizon-next-1.0.0"],
   "include": [
     "./src",
     "next-env.d.ts",
@@ -42,3 +42,4 @@
     ".next/types/**/*.ts"
   ]
 }
+

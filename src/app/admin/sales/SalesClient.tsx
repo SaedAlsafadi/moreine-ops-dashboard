@@ -1,4 +1,5 @@
-'use client'
+﻿'use client'
+import { Button } from '@/components/ui/Button'
 
 import { useState, useTransition, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -8,7 +9,6 @@ import Badge from '@/components/ui/Badge'
 import CsvExport from '@/components/CsvExport'
 import CsvImport from '@/components/CsvImport'
 import { addSale, deleteSale, importSales, type SaleInput } from '@/app/actions/sales'
-
 type ChannelType = 'b2c' | 'b2b'
 type SourceType = 'manual' | 'salla' | 'rewaa'
 
@@ -61,7 +61,7 @@ export default function SalesClient({ sales }: SalesClientProps) {
   function handleSave() {
     setError(null)
     if (!form.product_description || !form.date || form.quantity <= 0) {
-      setError(locale === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' : 'Please fill all required fields.')
+      setError(t('common.fillRequired'))
       return
     }
     // @ts-expect-error React 19
@@ -94,7 +94,7 @@ export default function SalesClient({ sales }: SalesClientProps) {
   const handleImport = useCallback(async (rows: Record<string, string>[]) => {
     try {
       const count = await importSales(rows)
-      setImportResult(locale === 'ar' ? `تم استيراد ${count} صفوف.` : `Imported ${count} rows.`)
+      setImportResult(t('common.importSuccess') + ' ' + count)
       router.refresh()
     } catch (e) {
       setImportResult(e instanceof Error ? e.message : 'Import failed')
@@ -113,17 +113,16 @@ export default function SalesClient({ sales }: SalesClientProps) {
           <CsvImport onImport={handleImport} label={t('sales.importCsv')}
             expectedColumns={['date', 'channel', 'product_description', 'quantity', 'unit', 'revenue', 'source']} />
           <CsvExport data={exportData} filename="sales.csv" label={t('sales.exportCsv')} />
-          <button onClick={() => { setForm(EMPTY_FORM); setError(null); setModalOpen(true) }}
-            className="px-4 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg text-sm font-medium transition shadow-sm">
+          <Button onClick={() => { setForm(EMPTY_FORM); setError(null); setModalOpen(true) }} variant="primary" size="md">
             + {t('sales.addSale')}
-          </button>
+          </Button>
         </div>
       </div>
 
       {importResult && (
-        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('port') || importResult.includes('استيراد') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+        <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('port') || importResult.includes('Ø§Ø³ØªÙŠØ±Ø§Ø¯') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
           {importResult}
-          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>✕</button>
+          <button className="ms-2 text-xs underline" onClick={() => setImportResult(null)}>âœ•</button>
         </div>
       )}
 
@@ -139,9 +138,9 @@ export default function SalesClient({ sales }: SalesClientProps) {
           </select>
         </div>
         <div className="ms-auto flex gap-4 text-sm text-olive">
-          <span>{locale === 'ar' ? `العدد: ${filteredSales.length}` : `${filteredSales.length} entries`}</span>
+          <span>{filteredSales.length} {t('sales.entries')}</span>
           {totalRevenue > 0 && (
-            <span className="font-medium text-sage">{locale === 'ar' ? `الإيرادات: ${totalRevenue.toLocaleString()} ريال` : `Revenue: ${totalRevenue.toLocaleString()}`}</span>
+            <span className="font-medium text-sage">{t('sales.revenuePrefix')} {totalRevenue.toLocaleString()}</span>
           )}
         </div>
       </div>
@@ -175,17 +174,16 @@ export default function SalesClient({ sales }: SalesClientProps) {
                   <td className="py-4 px-4 text-sm text-charcoal"><Badge label={sale.channel.toUpperCase()} variant={channelVariant[sale.channel]} /></td>
                   <td className="px-4 py-3 text-sm text-charcoal max-w-xs">{sale.product_description}</td>
                   <td className="px-4 py-3 text-sm text-charcoal whitespace-nowrap">
-                    {sale.quantity} {sale.unit === 'kg' ? 'kg' : (locale === 'ar' ? 'وحدة' : 'units')}
+                    {sale.quantity} {sale.unit === 'kg' ? 'kg' : (t('sales.units'))}
                   </td>
                   <td className="px-4 py-3 text-sm font-medium text-charcoal">
-                    {sale.revenue != null ? sale.revenue.toLocaleString() : '—'}
+                    {sale.revenue != null ? sale.revenue.toLocaleString() : 'â€”'}
                   </td>
                   <td className="px-4 py-3"><Badge label={sale.source} variant={sourceVariant[sale.source]} /></td>
                   <td className="px-4 py-3">
-                    <button onClick={() => setDeleteId(sale.id)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 font-medium transition">
+                    <Button onClick={() => setDeleteId(sale.id)} variant="danger" size="sm">
                       {t('common.delete')}
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))
@@ -252,7 +250,7 @@ export default function SalesClient({ sales }: SalesClientProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-olive mb-1">
-              {locale === 'ar' ? 'رقم الطلب الخارجي (اختياري)' : 'External Order ID (optional)'}
+              {t('sales.externalOrderId')}
             </label>
             <input type="text" value={form.external_order_id ?? ''}
               onChange={e => setForm(p => ({ ...p, external_order_id: e.target.value || null }))}
@@ -260,32 +258,29 @@ export default function SalesClient({ sales }: SalesClientProps) {
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button onClick={handleSave} disabled={isPending}
-              className="flex-1 py-2 bg-sage hover:bg-sage-dark text-white rounded-lg font-medium text-sm transition disabled:opacity-60">
+            <Button onClick={handleSave} disabled={isPending} variant="primary" className="flex-1">
               {isPending ? t('common.loading') : t('common.save')}
-            </button>
-            <button onClick={() => setModalOpen(false)}
-              className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition">
+            </Button>
+            <Button onClick={() => setModalOpen(false)} variant="secondary" className="flex-1">
               {t('common.cancel')}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
 
       {/* Delete Confirm */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('common.delete')} size="sm">
-        <p className="text-sm text-charcoal mb-4">{locale === 'ar' ? 'هل أنت متأكد من حذف هذا السجل؟' : 'Delete this sale record?'}</p>
+        <p className="text-sm text-charcoal mb-4">{t('sales.confirmDeleteSale')}</p>
         <div className="flex gap-3">
-          <button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending}
-            className="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium text-sm transition disabled:opacity-60">
+          <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}
-          </button>
-          <button onClick={() => setDeleteId(null)}
-            className="flex-1 py-2 bg-cream hover:bg-cream-dark text-olive rounded-lg font-medium text-sm transition">
+          </Button>
+          <Button onClick={() => setDeleteId(null)} variant="secondary" className="flex-1">
             {t('common.cancel')}
-          </button>
+          </Button>
         </div>
       </Modal>
     </div>
   )
 }
+
