@@ -1,0 +1,16 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import SalesClient from './SalesClient'
+
+export default async function SalesPage() {
+  const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.user) redirect('/auth/sign-in')
+
+  const { data: sales } = await supabase
+    .from('sales_log')
+    .select('*')
+    .order('date', { ascending: false })
+
+  return <SalesClient sales={sales ?? []} />
+}
