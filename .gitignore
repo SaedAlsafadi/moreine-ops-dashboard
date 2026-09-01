@@ -40,3 +40,17 @@ yarn-error.log*
 next-env.d.ts
 
 .idea
+
+# Antigravity / AI tooling
+skills-lock.json
+.agents/
+
+# Dev scripts
+fix_*.py
+refactor_*.py
+check_db.js
+run_seed.js
+out.css
+
+# Reference templates
+horizon-next-*/

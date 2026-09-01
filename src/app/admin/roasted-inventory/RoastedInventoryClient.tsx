@@ -1,5 +1,8 @@
 ﻿'use client'
 import { Button } from '@/components/ui/Button'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { ChannelSplitChart } from './RoastedCharts'
+import { Table, TableRow, TableCell } from '@/components/ui/Table'
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -176,17 +179,14 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-olive">{t('roastedInventory.title')}</h1>
-        <div className="flex flex-wrap gap-2">
+      <PageHeader title={t('roastedInventory.title')}>
           <CsvImport onImport={handleImport} label={t('roastedInventory.importCsv')}
             expectedColumns={['roast_batch_id', 'state', 'channel', 'quantity_kg', 'status', 'produced_date']} />
           <CsvExport data={exportData} filename="roasted-inventory.csv" label={t('roastedInventory.exportCsv')} />
           <Button onClick={openAdd} variant="primary" size="md">
             + {t('roastedInventory.addStock')}
           </Button>
-        </div>
-      </div>
+        </PageHeader>
 
       {importResult && (
         <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('Import') || importResult.includes('Ø§Ø³ØªÙŠØ±Ø§Ø¯') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
@@ -195,33 +195,28 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
-        <table className="w-full min-w-max text-start">
-          <thead>
-            <tr className="border-b border-light">
-              {headers.map(h => (
-                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+      <div className="mb-5 grid grid-cols-1 md:grid-cols-2">
+        <ChannelSplitChart data={['bar', 'b2c', 'b2b', 'unallocated'].map(ch => ({ channel: ch, kg: stock.filter(s => s.channel === ch).reduce((acc, curr) => acc + (curr.quantity_kg || 0), 0) }))} />
+      </div>
+
+      <Table headers={headers}>
             {stock.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
+                <TableCell className="py-10 text-center text-text-primary/50">{t('common.noData')}</TableCell>
               </tr>
             ) : (
               stock.map(row => (
-                <tr key={row.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
-                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{row.produced_date}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal">
+                <TableRow key={row.id}>
+                  <TableCell className="py-4 px-4 text-sm font-semibold text-text-secondary">{row.produced_date}</TableCell>
+                  <TableCell>
                     {row.roast_batches?.green_inventory?.lot_name ?? 'â€”'}
-                    <div className="text-xs text-olive/50">{row.roast_batches?.roast_date}</div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-charcoal capitalize">{t(`roastedInventory.${row.state}`)}</td>
-                  <td className="px-4 py-3"><Badge label={row.channel} variant={channelVariant[row.channel]} /></td>
-                  <td className="px-4 py-3"><Badge label={t(`roastedInventory.${row.status === 'in_stock' ? 'inStock' : row.status}`)} variant={statusVariant[row.status]} /></td>
-                  <td className="px-4 py-3 text-sm font-medium text-charcoal">{row.quantity_kg} kg</td>
-                  <td className="px-4 py-3">
+                    <div className="text-xs text-text-primary/50">{row.roast_batches?.roast_date}</div>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-text-secondary capitalize">{t(`roastedInventory.${row.state}`)}</TableCell>
+                  <TableCell><Badge label={row.channel} variant={channelVariant[row.channel]} /></TableCell>
+                  <TableCell><Badge label={t(`roastedInventory.${row.status === 'in_stock' ? 'inStock' : row.status}`)} variant={statusVariant[row.status]} /></TableCell>
+                  <TableCell className="px-4 py-3 text-sm font-medium text-text-secondary">{row.quantity_kg} kg</TableCell>
+                  <TableCell>
                     <div className="flex gap-2">
                       <Button onClick={() => openEdit(row)} variant="secondary" size="sm">
                         {t('common.edit')}
@@ -230,25 +225,23 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
                         {t('common.delete')}
                       </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </Table>
 
       {/* Add/Edit Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}
         title={editingId ? t('roastedInventory.editStock') : t('roastedInventory.addStock')} size="md">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               {t('roastedInventory.roastBatch')} <span className="text-red-500">*</span>
             </label>
             <select value={form.roast_batch_id}
               onChange={e => setForm(p => ({ ...p, roast_batch_id: e.target.value }))}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm">
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm">
               <option value="">{t('roastedInventory.selectBatch')}</option>
               {batches.map(b => (
                 <option key={b.id} value={b.id}>
@@ -260,17 +253,17 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.state')}</label>
+              <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.state')}</label>
               <select value={form.state} onChange={e => setForm(p => ({ ...p, state: e.target.value as StateType }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm">
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm">
                 <option value="bulk">{t('roastedInventory.bulk')}</option>
                 <option value="packed">{t('roastedInventory.packed')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.channel')}</label>
+              <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.channel')}</label>
               <select value={form.channel} onChange={e => setForm(p => ({ ...p, channel: e.target.value as ChannelType }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm">
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm">
                 {(['unallocated', 'bar', 'b2c', 'b2b'] as const).map(ch => (
                   <option key={ch} value={ch}>{ch}</option>
                 ))}
@@ -280,17 +273,17 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 {t('roastedInventory.quantity')} (kg) <span className="text-red-500">*</span>
               </label>
               <input type="number" step="0.01" min="0" value={form.quantity_kg || ''}
                 onChange={e => setForm(p => ({ ...p, quantity_kg: parseFloat(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm" />
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.status')}</label>
+              <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.status')}</label>
               <select value={form.status} onChange={e => setForm(p => ({ ...p, status: e.target.value as StatusType }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm">
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm">
                 <option value="in_stock">{t('roastedInventory.inStock')}</option>
                 <option value="shipped">{t('roastedInventory.shipped')}</option>
                 <option value="sold">{t('roastedInventory.sold')}</option>
@@ -302,34 +295,34 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
           {form.state === 'packed' && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.packageSize')} (g)</label>
+                <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.packageSize')} (g)</label>
                 <input type="number" min="0" value={form.package_size_g ?? ''}
                   onChange={e => setForm(p => ({ ...p, package_size_g: parseInt(e.target.value) || null }))}
-                  className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm" />
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.unitCount')}</label>
+                <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.unitCount')}</label>
                 <input type="number" min="0" value={form.unit_count ?? ''}
                   onChange={e => setForm(p => ({ ...p, unit_count: parseInt(e.target.value) || null }))}
-                  className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm" />
+                  className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
               </div>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               {t('roastedInventory.producedDate')} <span className="text-red-500">*</span>
             </label>
             <input type="date" value={form.produced_date}
               onChange={e => setForm(p => ({ ...p, produced_date: e.target.value }))}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm" />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">{t('roastedInventory.notes')}</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">{t('roastedInventory.notes')}</label>
             <textarea value={form.notes ?? ''} rows={2}
               onChange={e => setForm(p => ({ ...p, notes: e.target.value || null }))}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm resize-none" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none" />
           </div>
 
           {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -346,7 +339,7 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
       {/* Delete Confirm */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('common.delete')} size="sm">
-        <p className="text-sm text-charcoal mb-4">{t('common.confirmDeleteGeneric')}</p>
+        <p className="text-sm text-text-secondary mb-4">{t('common.confirmDeleteGeneric')}</p>
         <div className="flex gap-3">
           <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}
@@ -359,4 +352,5 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
     </div>
   )
 }
+
 

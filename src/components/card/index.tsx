@@ -1,17 +1,13 @@
 function Card(props: {
-  variant?: string;
-  extra?: string;
-  children?: JSX.Element | any[];
+  className?: string;
+  extra?: string; // Keep extra for backwards compatibility with Horizon template usage
+  children?: React.ReactNode;
   [x: string]: any;
 }) {
-  const { variant, extra, children, ...rest } = props;
+  const { className, extra, children, ...rest } = props;
   return (
     <div
-      className={`!z-5 relative flex flex-col rounded-[20px] bg-white bg-clip-border shadow-3xl ${
-        props.default
-          ? 'shadow-shadow-500 dark:shadow-none'
-          : 'shadow-shadow-100 dark:shadow-none'
-      }  dark:!bg-navy-800 dark:text-white  ${extra}`}
+      className={`relative flex flex-col rounded-card bg-surface bg-clip-border shadow-card ${className || ''} ${extra || ''}`}
       {...rest}
     >
       {children}

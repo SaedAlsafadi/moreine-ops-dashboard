@@ -27,7 +27,7 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('name', {
       id: 'name',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">NAME</p>
+        <p className="text-sm font-bold text-text-secondary">NAME</p>
       ),
       cell: (info: any) => (
         <div className="flex items-center">
@@ -36,7 +36,7 @@ function CheckTable(props: { tableData: any }) {
             color="indigo"
             me="10px"
           />
-          <p className="ml-3 text-sm font-bold text-navy-700 dark:text-white">
+          <p className="ml-3 text-sm font-bold text-text-primary">
             {info.getValue()[0]}
           </p>
         </div>
@@ -45,12 +45,12 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('progress', {
       id: 'progress',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">
+        <p className="text-sm font-bold text-text-secondary">
           PROGRESS
         </p>
       ),
       cell: (info) => (
-        <p className="text-sm font-bold text-navy-700 dark:text-white">
+        <p className="text-sm font-bold text-text-primary">
           {info.getValue()}
         </p>
       ),
@@ -58,12 +58,12 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('quantity', {
       id: 'quantity',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">
+        <p className="text-sm font-bold text-text-secondary">
           QUANTITY
         </p>
       ),
       cell: (info) => (
-        <p className="text-sm font-bold text-navy-700 dark:text-white">
+        <p className="text-sm font-bold text-text-primary">
           {info.getValue()}
         </p>
       ),
@@ -71,10 +71,10 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('date', {
       id: 'date',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">DATE</p>
+        <p className="text-sm font-bold text-text-secondary">DATE</p>
       ),
       cell: (info) => (
-        <p className="text-sm font-bold text-navy-700 dark:text-white">
+        <p className="text-sm font-bold text-text-primary">
           {info.getValue()}
         </p>
       ),
@@ -95,7 +95,7 @@ function CheckTable(props: { tableData: any }) {
   return (
     <Card extra={'w-full h-full sm:overflow-auto px-6'}>
       <header className="relative flex items-center justify-between pt-4">
-        <div className="text-xl font-bold text-navy-700 dark:text-white">
+        <div className="text-xl font-bold text-text-primary">
           Check Table
         </div>
 
@@ -113,7 +113,7 @@ function CheckTable(props: { tableData: any }) {
                       key={header.id}
                       colSpan={header.colSpan}
                       onClick={header.column.getToggleSortingHandler()}
-                      className="cursor-pointer border-b border-gray-200 pb-2 pr-4 pt-4 text-start dark:border-white/30"
+                      className="cursor-pointer border-b border-border pb-2 pr-4 pt-4 text-start"
                     >
                       <div className="items-center justify-between text-xs text-gray-200">
                         {flexRender(
@@ -142,7 +142,7 @@ function CheckTable(props: { tableData: any }) {
                       return (
                         <td
                           key={cell.id}
-                          className="min-w-[150px] border-white/0 py-3  pr-4"
+                          className="min-w-[150px] border-white/0 py-3 pr-4"
                         >
                           {flexRender(
                             cell.column.columnDef.cell,

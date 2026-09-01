@@ -1,4 +1,4 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 import React from 'react';
 import { useCallback } from 'react';
 import { usePathname } from 'next/navigation';
@@ -44,7 +44,7 @@ export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
                   {route.icon ? route.icon : <DashIcon />}{' '}
                 </span>
                 <p
-                  className={`leading-1 mr-4 flex ${
+                  className={`leading-1 me-4 flex ${
                     activeRoute(route.path) === true
                       ? 'font-bold text-navy-700 dark:text-white'
                       : 'font-medium text-gray-600'
@@ -67,3 +67,4 @@ export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
 };
 
 export default SidebarLinks;
+

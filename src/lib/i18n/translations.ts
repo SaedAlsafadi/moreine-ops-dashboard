@@ -238,6 +238,16 @@ const en: TranslationShape = {
     consumed:   'Consumed',
     adjusted:   'Adjusted',
   },
+  settings: {
+    title:      'Settings',
+    language:   'Language',
+    settings:   'Settings',
+    theme:      'Theme',
+    english:    'English',
+    arabic:     'Arabic',
+    lightMode:  'Light Mode',
+    darkMode:   'Dark Mode',
+  },
 }
 
 const ar: TranslationShape = {
@@ -414,6 +424,16 @@ const ar: TranslationShape = {
     sold:       'مُباع',
     consumed:   'مُستهلك',
     adjusted:   'مُعدل',
+  },
+  settings: {
+    title:      'الإعدادات',
+    language:   'اللغة',
+    settings:   'الإعدادات',
+    theme:      'المظهر',
+    english:    'الإنجليزية',
+    arabic:     'العربية',
+    lightMode:  'الوضع الفاتح',
+    darkMode:   'الوضع الداكن',
   },
 }
 

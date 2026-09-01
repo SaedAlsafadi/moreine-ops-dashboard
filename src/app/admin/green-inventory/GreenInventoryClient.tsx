@@ -1,5 +1,7 @@
 ﻿'use client'
 import { Button } from '@/components/ui/Button'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Table, TableRow, TableCell } from '@/components/ui/Table'
 
 import { useState, useTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
@@ -143,9 +145,7 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-olive">{t('greenInventory.title')}</h1>
-        <div className="flex flex-wrap gap-2">
+      <PageHeader title={t('greenInventory.title')}>
           <CsvImport
             onImport={handleImport}
             label={t('greenInventory.importCsv')}
@@ -155,8 +155,7 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
           <Button onClick={openAdd} variant="primary" size="md">
             + {t('greenInventory.addLot')}
           </Button>
-        </div>
-      </div>
+        </PageHeader>
 
       {importResult && (
         <div className={`text-sm px-4 py-3 rounded-lg border ${importResult.includes('import') || importResult.includes('Ø§Ø³ØªÙŠØ±Ø§Ø¯') ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
@@ -165,40 +164,31 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
-        <table className="w-full min-w-max text-start">
-          <thead>
-            <tr className="border-b border-light">
-              {headers.map(h => (
-                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+      <Table headers={headers}>
             {lots.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
+                <TableCell className="py-10 text-center text-text-primary/50">{t('common.noData')}</TableCell>
               </tr>
             ) : (
               lots.map(lot => (
-                <tr key={lot.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
-                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{lot.lot_name}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal">{lot.origin}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal">{lot.supplier}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal">{lot.arrival_date}</td>
-                  <td className="py-4 px-4 text-sm font-semibold text-charcoal">{lot.initial_kg} kg</td>
-                  <td className="px-4 py-4 text-sm whitespace-nowrap">
-                    <span className={lot.remaining_kg < lowStockThreshold ? 'text-amber-600 font-semibold' : 'text-charcoal'}>
+                <TableRow key={lot.id}>
+                  <TableCell className="py-4 px-4 text-sm font-semibold text-text-secondary">{lot.lot_name}</TableCell>
+                  <TableCell>{lot.origin}</TableCell>
+                  <TableCell>{lot.supplier}</TableCell>
+                  <TableCell>{lot.arrival_date}</TableCell>
+                  <TableCell className="py-4 px-4 text-sm font-semibold text-text-secondary">{lot.initial_kg} kg</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    <span className={lot.remaining_kg < lowStockThreshold ? 'text-amber-600 font-semibold' : 'text-text-primary'}>
                       {lot.remaining_kg} kg
                     </span>
                     {lot.remaining_kg < lowStockThreshold && (
                       <Badge label={t('greenInventory.low')} variant="yellow" />
                     )}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-charcoal">
+                  </TableCell>
+                  <TableCell>
                     {lot.cost_per_kg != null ? `$${lot.cost_per_kg}/kg` : 'â€”'}
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell>
                     <div className="flex gap-2">
                       <Button onClick={() => openEdit(lot)} variant="secondary" size="sm">
                         {t('common.edit')}
@@ -207,13 +197,11 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
                         {t('common.delete')}
                       </Button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </Table>
 
       {/* Add/Edit Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingLot ? t('greenInventory.editLot') : t('greenInventory.addLot')} size="md">
@@ -228,25 +216,25 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
             { label: t('greenInventory.costPerKg'), field: 'cost_per_kg' as const, type: 'number', required: false },
           ].map(({ label, field, type, required }) => (
             <div key={field}>
-              <label className="block text-sm font-medium text-olive mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 {label} {required && <span className="text-red-500">*</span>}
               </label>
               <input
                 type={type}
                 value={(form[field] as string | number) ?? ''}
                 onChange={e => handleFormChange(field, type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value)}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm"
                 step={type === 'number' ? '0.01' : undefined}
               />
             </div>
           ))}
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">{t('greenInventory.notes')}</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">{t('greenInventory.notes')}</label>
             <textarea
               value={form.notes ?? ''}
               onChange={e => handleFormChange('notes', e.target.value || null)}
               rows={2}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
             />
           </div>
           {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -263,7 +251,7 @@ export default function GreenInventoryClient({ lots, lowStockThreshold }: GreenI
 
       {/* Delete Confirm Modal */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('greenInventory.deleteLot')} size="sm">
-        <p className="text-sm text-charcoal mb-4">{t('greenInventory.confirmDelete')}</p>
+        <p className="text-sm text-text-secondary mb-4">{t('greenInventory.confirmDelete')}</p>
         <div className="flex gap-3">
           <Button onClick={() => deleteId && handleDelete(deleteId)} disabled={isPending} variant="danger" className="flex-1">
             {t('common.delete')}

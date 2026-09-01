@@ -1,5 +1,7 @@
 ﻿'use client'
 import { Button } from '@/components/ui/Button'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Table, TableRow, TableCell } from '@/components/ui/Table'
 
 import { useState, useMemo } from 'react'
 import { useLanguage } from '@/lib/i18n/context'
@@ -61,31 +63,32 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
     setFilterTo('')
   }
 
+  const headers = [t('movements.date'), t('movements.category'), t('movements.action'), t('movements.quantity'), t('movements.fromChannel'), t('movements.toChannel'), t('movements.note')]
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-olive">{t('movements.title')}</h1>
-        <span className="text-sm text-olive/60 bg-cream px-3 py-1.5 rounded-full">
+        <h1 className="text-2xl font-bold text-text-primary">{t('movements.title')}</h1>
+        <span className="text-sm text-text-primary/60 bg-cream px-3 py-1.5 rounded-full">
           {filtered.length} {t('movements.records')}
         </span>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-cream-dark p-4 shadow-sm">
+      <div className="bg-surface rounded-xl border border-border p-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
-            <label className="block text-xs font-medium text-olive mb-1">{t('movements.filterCategory')}</label>
+            <label className="block text-xs font-medium text-text-primary mb-1">{t('movements.filterCategory')}</label>
             <select value={filterCategory} onChange={e => setFilterCategory(e.target.value as 'all' | 'green' | 'roasted')}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-sage">
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-accent">
               <option value="all">{t('movements.all')}</option>
               <option value="green">{t('movements.green')}</option>
               <option value="roasted">{t('movements.roasted')}</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-olive mb-1">{t('movements.filterAction')}</label>
+            <label className="block text-xs font-medium text-text-primary mb-1">{t('movements.filterAction')}</label>
             <select value={filterAction} onChange={e => setFilterAction(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-sage">
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-accent">
               <option value="all">{t('movements.all')}</option>
               {allActions.map(a => (
                 <option key={a} value={a}>{a}</option>
@@ -93,14 +96,14 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-olive mb-1">{t('movements.filterDateFrom')}</label>
+            <label className="block text-xs font-medium text-text-primary mb-1">{t('movements.filterDateFrom')}</label>
             <input type="date" value={filterFrom} onChange={e => setFilterFrom(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-sage" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-olive mb-1">{t('movements.filterDateTo')}</label>
+            <label className="block text-xs font-medium text-text-primary mb-1">{t('movements.filterDateTo')}</label>
             <input type="date" value={filterTo} onChange={e => setFilterTo(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-sage" />
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
           </div>
         </div>
         {(filterCategory !== 'all' || filterAction !== 'all' || filterFrom || filterTo) && (
@@ -111,59 +114,41 @@ export default function MovementsClient({ movements }: MovementsClientProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
-        <table className="w-full min-w-max text-start">
-          <thead>
-            <tr className="border-b border-light">
-              {[
-                t('movements.date'),
-                t('movements.category'),
-                t('movements.action'),
-                t('movements.quantity'),
-                t('movements.fromChannel'),
-                t('movements.toChannel'),
-                t('movements.note'),
-              ].map(h => (
-                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+      <Table headers={headers}>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
+                <TableCell className="py-10 text-center text-text-primary/50">{t('common.noData')}</TableCell>
               </tr>
             ) : (
               filtered.map(m => (
-                <tr key={m.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
-                  <td className="py-4 px-4 text-xs font-semibold text-charcoal whitespace-nowrap">
+                <TableRow key={m.id}>
+                  <TableCell className="py-4 px-4 text-xs font-semibold text-text-secondary whitespace-nowrap">
                     {new Date(m.date).toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-US', {
                       dateStyle: 'short',
                       timeStyle: 'short',
                     })}
-                  </td>
-                  <td className="py-4 px-4">
+                  </TableCell>
+                  <TableCell className="py-4 px-4">
                     <Badge
                       label={m.category === 'green' ? 'ðŸŒ¿ ' + (t('movements.green')) : 'â˜• ' + (t('movements.roasted'))}
                       variant={m.category === 'green' ? 'green' : 'sage'}
                     />
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell>
                     <Badge label={m.action} variant={actionVariant[m.action] ?? 'gray'} />
-                  </td>
-                  <td className="px-4 py-3 text-sm font-medium text-charcoal">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm font-medium text-text-secondary">
                     {m.quantity_kg != null ? `${m.quantity_kg} kg` : 'â€”'}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-olive/70">{m.from_channel ?? 'â€”'}</td>
-                  <td className="px-4 py-3 text-sm text-olive/70">{m.to_channel ?? 'â€”'}</td>
-                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{m.note ?? 'â€”'}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-text-primary/70">{m.from_channel ?? 'â€”'}</TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-text-primary/70">{m.to_channel ?? 'â€”'}</TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-text-secondary max-w-xs truncate">{m.note ?? 'â€”'}</TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </Table>
     </div>
   )
 }
+
 

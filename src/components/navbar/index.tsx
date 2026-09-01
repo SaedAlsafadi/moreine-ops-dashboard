@@ -26,24 +26,24 @@ const Navbar = (props: {
     document.body.classList.contains('dark'),
   );
   return (
-    <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-white/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
+    <nav className="sticky top-4 z-40 flex flex-row flex-wrap items-center justify-between rounded-xl bg-surface/10 p-2 backdrop-blur-xl dark:bg-[#0b14374d]">
       <div className="ml-[6px]">
-        <p className="shrink text-[33px] capitalize text-navy-700 dark:text-white">
+        <p className="shrink text-[33px] capitalize text-text-primary">
           <NavLink
             href="#"
-            className="font-bold capitalize hover:text-navy-700 dark:hover:text-white"
+            className="font-bold capitalize hover:text-text-primary dark:hover:text-white"
           >
             {brandText}
           </NavLink>
         </p>
       </div>
 
-      <div className="relative mt-[3px] flex h-[61px] w-[355px] flex-grow items-center justify-around gap-2 rounded-full bg-white px-2 py-2 shadow-xl shadow-shadow-500 dark:!bg-navy-800 dark:shadow-none md:w-[365px] md:flex-grow-0 md:gap-1 xl:w-[365px] xl:gap-2">
-        <NavLink href="/admin/settings" className="flex h-10 w-10 items-center justify-center rounded-full bg-lightPrimary text-navy-700 hover:bg-gray-200 dark:bg-navy-900 dark:text-white dark:hover:bg-white/20 transition-colors">
+      <div className="relative mt-[3px] flex h-[61px] w-[355px] flex-grow items-center justify-around gap-2 rounded-full bg-surface px-2 py-2 shadow-xl md:w-[365px] md:flex-grow-0 md:gap-1 xl:w-[365px] xl:gap-2">
+        <NavLink href="/admin/settings" className="flex h-10 w-10 items-center justify-center rounded-full bg-background text-text-primary hover:bg-border dark:bg-navy-900 dark:hover:bg-surface/20 transition-colors">
           <FiSettings className="h-5 w-5" />
         </NavLink>
         <span
-          className="flex cursor-pointer text-xl text-gray-600 dark:text-white xl:hidden"
+          className="flex cursor-pointer text-xl text-text-secondary xl:hidden"
           onClick={onOpenSidenav}
         >
           <FiAlignJustify className="h-5 w-5" />
@@ -52,18 +52,18 @@ const Navbar = (props: {
         <Dropdown
           button={
             <p className="cursor-pointer">
-              <IoMdNotificationsOutline className="h-4 w-4 text-gray-600 dark:text-white" />
+              <IoMdNotificationsOutline className="h-4 w-4 text-text-secondary" />
             </p>
           }
           animation="origin-[65%_0%] md:origin-top-right transition-all duration-300 ease-in-out"
           classNames={'py-2 top-4 -left-[230px] md:-left-[440px] w-max'}
         >
-          <div className="flex w-[360px] flex-col gap-3 rounded-[20px] bg-white p-4 shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none sm:w-[460px]">
+          <div className="flex w-[360px] flex-col gap-3 rounded-[20px] bg-surface p-4 shadow-xl sm:w-[460px]">
             <div className="flex items-center justify-between">
-              <p className="text-base font-bold text-navy-700 dark:text-white">
+              <p className="text-base font-bold text-text-primary">
                 Notification
               </p>
-              <p className="text-sm font-bold text-navy-700 dark:text-white">
+              <p className="text-sm font-bold text-text-primary">
                 Mark all read
               </p>
             </div>
@@ -73,10 +73,10 @@ const Navbar = (props: {
                 <BsArrowBarUp />
               </div>
               <div className="ml-2 flex h-full w-full flex-col justify-center rounded-lg px-1 text-sm">
-                <p className="mb-1 text-left text-base font-bold text-gray-900 dark:text-white">
+                <p className="mb-1 text-left text-base font-bold text-gray-900">
                   New Update: Horizon UI Dashboard PRO
                 </p>
-                <p className="font-base text-left text-xs text-gray-900 dark:text-white">
+                <p className="font-base text-left text-xs text-gray-900">
                   A new update for your downloaded item is available!
                 </p>
               </div>
@@ -87,10 +87,10 @@ const Navbar = (props: {
                 <BsArrowBarUp />
               </div>
               <div className="ml-2 flex h-full w-full flex-col justify-center rounded-lg px-1 text-sm">
-                <p className="mb-1 text-left text-base font-bold text-gray-900 dark:text-white">
+                <p className="mb-1 text-left text-base font-bold text-gray-900">
                   New Update: Horizon UI Dashboard PRO
                 </p>
-                <p className="font-base text-left text-xs text-gray-900 dark:text-white">
+                <p className="font-base text-left text-xs text-gray-900">
                   A new update for your downloaded item is available!
                 </p>
               </div>
@@ -101,13 +101,13 @@ const Navbar = (props: {
         <Dropdown
           button={
             <p className="cursor-pointer">
-              <IoMdInformationCircleOutline className="h-4 w-4 text-gray-600 dark:text-white" />
+              <IoMdInformationCircleOutline className="h-4 w-4 text-text-secondary" />
             </p>
           }
           classNames={'py-2 top-6 -left-[250px] md:-left-[330px] w-max'}
           animation="origin-[75%_0%] md:origin-top-right transition-all duration-300 ease-in-out"
         >
-          <div className="flex w-[350px] flex-col gap-2 rounded-[20px] bg-white p-4 shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
+          <div className="flex w-[350px] flex-col gap-2 rounded-[20px] bg-surface p-4 shadow-xl">
             <div
               style={{
                 backgroundImage: `url(${navbarimage.src})`,
@@ -124,20 +124,20 @@ const Navbar = (props: {
             </a>
             <a
               href="#!"
-              className="px-full linear flex cursor-pointer items-center justify-center rounded-xl border py-[11px] font-bold text-navy-700 transition duration-200 hover:bg-gray-200 hover:text-navy-700 dark:!border-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:active:bg-white/10"
+              className="px-full linear flex cursor-pointer items-center justify-center rounded-xl border py-[11px] font-bold text-text-primary transition duration-200 hover:bg-border hover:text-text-primary dark:!border-white/10 dark:hover:bg-surface/20 dark:hover:text-white dark:active:bg-surface/10"
             >
               See Documentation
             </a>
             <a
               href="#!"
-              className="hover:bg-black px-full linear flex cursor-pointer items-center justify-center rounded-xl py-[11px] font-bold text-navy-700 transition duration-200 hover:text-navy-700 dark:text-white dark:hover:text-white"
+              className="hover:bg-black px-full linear flex cursor-pointer items-center justify-center rounded-xl py-[11px] font-bold text-text-primary transition duration-200 hover:text-text-primary dark:hover:text-white"
             >
               Try Horizon Free
             </a>
           </div>
         </Dropdown>
         <div
-          className="cursor-pointer text-gray-600"
+          className="cursor-pointer text-text-secondary"
           onClick={() => {
             if (darkmode) {
               document.body.classList.remove('dark');
@@ -149,9 +149,9 @@ const Navbar = (props: {
           }}
         >
           {darkmode ? (
-            <RiSunFill className="h-4 w-4 text-gray-600 dark:text-white" />
+            <RiSunFill className="h-4 w-4 text-text-secondary" />
           ) : (
-            <RiMoonFill className="h-4 w-4 text-gray-600 dark:text-white" />
+            <RiMoonFill className="h-4 w-4 text-text-secondary" />
           )}
         </div>
         {/* Profile & Dropdown */}
@@ -167,26 +167,26 @@ const Navbar = (props: {
           }
           classNames={'py-2 top-8 -left-[180px] w-max'}
         >
-          <div className="flex h-48 w-56 flex-col justify-start rounded-[20px] bg-white bg-cover bg-no-repeat shadow-xl shadow-shadow-500 dark:!bg-navy-700 dark:text-white dark:shadow-none">
+          <div className="flex h-48 w-56 flex-col justify-start rounded-[20px] bg-surface bg-cover bg-no-repeat shadow-xl">
             <div className="ml-4 mt-3">
               <div className="flex items-center gap-2">
-                <p className="text-sm font-bold text-navy-700 dark:text-white">
+                <p className="text-sm font-bold text-text-primary">
                   👋 Hey, Adela
                 </p>{' '}
               </div>
             </div>
-            <div className="mt-3 h-px w-full bg-gray-200 dark:bg-white/20 " />
+            <div className="mt-3 h-px w-full bg-border dark:bg-surface/20" />
 
             <div className="ml-4 mt-3 flex flex-col">
               <a
                 href=" "
-                className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
+                className="text-sm text-gray-800 hover:"
               >
                 Profile Settings
               </a>
               <a
                 href=" "
-                className="mt-3 text-sm text-gray-800 dark:text-white hover:dark:text-white"
+                className="mt-3 text-sm text-gray-800 hover:"
               >
                 Newsletter Settings
               </a>

@@ -9,16 +9,16 @@ const Project = () => {
   return (
     <Card extra={'w-full p-4 h-full'}>
       <div className="mb-8 w-full">
-        <p className="text-xl font-bold text-navy-700 dark:text-white">
+        <p className="text-xl font-bold text-text-primary">
           All projects
         </p>
-        <p className="mt-2 text-base text-gray-600">
+        <p className="mt-2 text-base text-text-secondary">
           Here you can find more details about your projects. Keep you user
           engaged by providing meaningful information.
         </p>
       </div>
       {/* Project 1 */}
-      <div className="flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-2xl shadow-gray-200 dark:!bg-navy-700 dark:shadow-none">
+      <div className="flex w-full items-center justify-between rounded-2xl bg-surface p-3 shadow-2xl shadow-gray-200">
         <div className="flex items-center">
           <div className="">
             <Image
@@ -30,13 +30,13 @@ const Project = () => {
             />
           </div>
           <div className="ml-4">
-            <p className="text-base font-medium text-navy-700 dark:text-white">
+            <p className="text-base font-medium text-text-primary">
               Technology behind the Blockchain
             </p>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-text-secondary">
               Project #1 .
               <a
-                className="ml-1 font-medium text-brand-500 hover:text-brand-500 dark:text-white"
+                className="ml-1 font-medium text-accent hover:text-accent"
                 href=" "
               >
                 See product details
@@ -44,12 +44,12 @@ const Project = () => {
             </p>
           </div>
         </div>
-        <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
+        <div className="mr-4 flex items-center justify-center text-text-secondary">
           <MdModeEditOutline />
         </div>
       </div>
       {/* Project 1 */}
-      <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-2xl shadow-gray-200 dark:!bg-navy-700 dark:shadow-none">
+      <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-surface p-3 shadow-2xl shadow-gray-200">
         <div className="flex items-center">
           <div className="">
             <Image
@@ -61,13 +61,13 @@ const Project = () => {
             />
           </div>
           <div className="ml-4">
-            <p className="text-base font-medium text-navy-700 dark:text-white">
+            <p className="text-base font-medium text-text-primary">
               Technology behind the Blockchain
             </p>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-text-secondary">
               Project #1 .
               <a
-                className="ml-1 font-medium text-brand-500 hover:text-brand-500 dark:text-white"
+                className="ml-1 font-medium text-accent hover:text-accent"
                 href=" "
               >
                 See product details
@@ -75,12 +75,12 @@ const Project = () => {
             </p>
           </div>
         </div>
-        <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
+        <div className="mr-4 flex items-center justify-center text-text-secondary">
           <MdModeEditOutline />
         </div>
       </div>
       {/* Project 1 */}
-      <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white p-3 shadow-2xl shadow-gray-200 dark:!bg-navy-700 dark:shadow-none">
+      <div className="mt-3 flex w-full items-center justify-between rounded-2xl bg-surface p-3 shadow-2xl shadow-gray-200">
         <div className="flex items-center">
           <div className="">
             <Image
@@ -92,13 +92,13 @@ const Project = () => {
             />
           </div>
           <div className="ml-4">
-            <p className="text-base font-medium text-navy-700 dark:text-white">
+            <p className="text-base font-medium text-text-primary">
               Technology behind the Blockchain
             </p>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-text-secondary">
               Project #1 .
               <a
-                className="ml-1 font-medium text-brand-500 hover:text-brand-500 dark:text-white"
+                className="ml-1 font-medium text-accent hover:text-accent"
                 href=" "
               >
                 See product details
@@ -106,7 +106,7 @@ const Project = () => {
             </p>
           </div>
         </div>
-        <div className="mr-4 flex items-center justify-center text-gray-600 dark:text-white">
+        <div className="mr-4 flex items-center justify-center text-text-secondary">
           <MdModeEditOutline />
         </div>
       </div>

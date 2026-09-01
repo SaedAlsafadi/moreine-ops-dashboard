@@ -25,7 +25,7 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('name', {
       id: 'name',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">NAME</p>
+        <p className="text-sm font-bold text-text-secondary">NAME</p>
       ),
       cell: (info: any) => (
         <div className="flex items-center gap-2">
@@ -38,7 +38,7 @@ function CheckTable(props: { tableData: any }) {
               alt=""
             />
           </div>
-          <p className="text-sm font-medium text-navy-700 dark:text-white">
+          <p className="text-sm font-medium text-text-primary">
             {info.getValue()[0]}
           </p>
         </div>
@@ -47,12 +47,12 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('artworks', {
       id: 'artworks',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">
+        <p className="text-sm font-bold text-text-secondary">
           ARTWORKS
         </p>
       ),
       cell: (info) => (
-        <p className="text-md font-medium text-gray-600 dark:text-white">
+        <p className="text-md font-medium text-text-secondary">
           {info.getValue()}
         </p>
       ),
@@ -60,7 +60,7 @@ function CheckTable(props: { tableData: any }) {
     columnHelper.accessor('rating', {
       id: 'rating',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">
+        <p className="text-sm font-bold text-text-secondary">
           RATING
         </p>
       ),
@@ -86,11 +86,11 @@ function CheckTable(props: { tableData: any }) {
   return (
     <Card extra={'w-full sm:overflow-auto px-6'}>
       <header className="relative flex items-center justify-between pt-4">
-        <div className="text-xl font-bold text-navy-700 dark:text-white">
+        <div className="text-xl font-bold text-text-primary">
           Check Table
         </div>
 
-        <button className="dark:active-bg-white-20 linear rounded-[20px] bg-lightPrimary px-4 py-2 text-base font-medium text-brand-500 transition duration-200 hover:bg-gray-100 active:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10">
+        <button className="dark:active-bg-surface-20 linear rounded-[20px] bg-background px-4 py-2 text-base font-medium text-accent transition duration-200 hover:bg-gray-100 active:bg-border dark:bg-surface/5 dark:hover:bg-surface/10">
           See all
         </button>
       </header>
@@ -106,7 +106,7 @@ function CheckTable(props: { tableData: any }) {
                       key={header.id}
                       colSpan={header.colSpan}
                       onClick={header.column.getToggleSortingHandler()}
-                      className="cursor-pointer border-b border-gray-200 pb-2 pr-4 pt-4 text-start"
+                      className="cursor-pointer border-b border-border pb-2 pr-4 pt-4 text-start"
                     >
                       <div className="items-center justify-between text-xs text-gray-200">
                         {flexRender(
@@ -135,7 +135,7 @@ function CheckTable(props: { tableData: any }) {
                       return (
                         <td
                           key={cell.id}
-                          className="min-w-[150px] border-white/0 py-3  pr-4"
+                          className="min-w-[150px] border-white/0 py-3 pr-4"
                         >
                           {flexRender(
                             cell.column.columnDef.cell,

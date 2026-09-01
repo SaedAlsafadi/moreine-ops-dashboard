@@ -25,7 +25,7 @@ export default function FixedPlugin(props: { [x: string]: any }) {
     >
       {/* // left={document.documentElement.dir === "rtl" ? "35px" : ""}
       // right={document.documentElement.dir === "rtl" ? "" : "35px"} */}
-      <div className="cursor-pointer text-gray-600">
+      <div className="cursor-pointer text-text-secondary">
         {darkmode ? (
           <RiSunFill className="h-4 w-4 text-white" />
         ) : (

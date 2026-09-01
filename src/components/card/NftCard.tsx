@@ -36,13 +36,13 @@ const NftCard = (props: {
           />
           <button
             onClick={() => setHeart(!heart)}
-            className="absolute right-3 top-3 flex items-center justify-center rounded-full bg-white p-2 text-brand-500 hover:cursor-pointer"
+            className="absolute right-3 top-3 flex items-center justify-center rounded-full bg-surface p-2 text-accent hover:cursor-pointer"
           >
             <div className="flex h-full w-full items-center justify-center rounded-full text-xl hover:bg-gray-50 dark:text-navy-900">
               {heart ? (
                 <IoHeartOutline />
               ) : (
-                <IoHeart className="text-brand-500" />
+                <IoHeart className="text-accent" />
               )}
             </div>
           </button>
@@ -50,17 +50,17 @@ const NftCard = (props: {
 
         <div className="mb-3 flex items-center justify-between px-1 md:flex-col md:items-start lg:flex-row lg:justify-between xl:flex-col xl:items-start 3xl:flex-row 3xl:justify-between">
           <div className="mb-2">
-            <p className="text-lg font-bold text-navy-700 dark:text-white">
+            <p className="text-lg font-bold text-text-primary">
               {' '}
               {title}{' '}
             </p>
-            <p className="mt-1 text-sm font-medium text-gray-600 md:mt-2">
+            <p className="mt-1 text-sm font-medium text-text-secondary md:mt-2">
               By {author}{' '}
             </p>
           </div>
 
           <div className="flex flex-row-reverse md:mt-2 lg:mt-0">
-            <span className="z-0 ml-px inline-flex h-8 w-8 items-center justify-center rounded-full border border-white bg-[#E0E5F2] text-xs text-navy-700 dark:!border-navy-800 dark:bg-gray-800 dark:text-white">
+            <span className="z-0 ml-px inline-flex h-8 w-8 items-center justify-center rounded-full border border-white bg-[#E0E5F2] text-xs text-text-primary dark:!border-navy-800 dark:bg-gray-800">
               +5
             </span>
             {bidders.map((avt, key) => (
@@ -82,7 +82,7 @@ const NftCard = (props: {
 
         <div className="flex items-center justify-between md:flex-col md:items-start lg:flex-row lg:justify-between xl:flex-col 2xl:items-start 3xl:flex-row 3xl:items-center 3xl:justify-between">
           <div className="flex">
-            <p className="mb-2 text-sm font-bold text-brand-500 dark:text-white">
+            <p className="mb-2 text-sm font-bold text-accent">
               Current Bid: {price} <span>ETH</span>
             </p>
           </div>

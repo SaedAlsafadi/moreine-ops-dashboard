@@ -24,31 +24,31 @@ const Banner = () => {
 
       {/* Name and position */}
       <div className="mt-16 flex flex-col items-center">
-        <h4 className="text-xl font-bold text-navy-700 dark:text-white">
+        <h4 className="text-xl font-bold text-text-primary">
           Adela Parkson
         </h4>
-        <h5 className="text-base font-normal text-gray-600">Product Manager</h5>
+        <h5 className="text-base font-normal text-text-secondary">Product Manager</h5>
       </div>
 
       {/* Post followers */}
       <div className="mb-3 mt-6 flex gap-4 md:!gap-14">
         <div className="flex flex-col items-center justify-center">
-          <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
+          <h4 className="text-2xl font-bold text-text-primary">
             17
           </h4>
-          <p className="text-sm font-normal text-gray-600">Posts</p>
+          <p className="text-sm font-normal text-text-secondary">Posts</p>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
+          <h4 className="text-2xl font-bold text-text-primary">
             9.7K
           </h4>
-          <p className="text-sm font-normal text-gray-600">Followers</p>
+          <p className="text-sm font-normal text-text-secondary">Followers</p>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <h4 className="text-2xl font-bold text-navy-700 dark:text-white">
+          <h4 className="text-2xl font-bold text-text-primary">
             434
           </h4>
-          <p className="text-sm font-normal text-gray-600">Following</p>
+          <p className="text-sm font-normal text-text-secondary">Following</p>
         </div>
       </div>
     </Card>

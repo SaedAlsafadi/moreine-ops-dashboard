@@ -1,5 +1,7 @@
-'use client'
+﻿'use client'
 import { Button } from '@/components/ui/Button'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { Table, TableRow, TableCell } from '@/components/ui/Table'
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
@@ -94,11 +96,10 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
 
   const selectedLot = greenLots.find(l => l.id === form.green_lot_id)
 
+  const headers = [t('roasting.roastDate'), t('roasting.greenLot'), t('roasting.inputKg'), t('roasting.outputKg'), t('roasting.yieldPct'), t('roasting.notes'), t('greenInventory.actions')]
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-olive">{t('roasting.title')}</h1>
-        <div className="flex flex-wrap gap-2">
+      <PageHeader title={t('roasting.title')}>
           <CsvExport data={exportData} filename="roast-batches.csv" label={t('roasting.exportCsv')} />
           <Button
             onClick={() => { setError(null); setModalOpen(true) }}
@@ -106,72 +107,50 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
           >
             + {t('roasting.newBatch')}
           </Button>
-        </div>
-      </div>
+        </PageHeader>
 
-      <div className="overflow-x-auto rounded-xl bg-white shadow-horizon-sm p-4">
-        <table className="w-full min-w-max text-start">
-          <thead>
-            <tr className="border-b border-light">
-              {[
-                t('roasting.roastDate'),
-                t('roasting.greenLot'),
-                t('roasting.inputKg'),
-                t('roasting.outputKg'),
-                t('roasting.yieldPct'),
-                t('roasting.notes'),
-                t('greenInventory.actions'),
-              ].map(h => (
-                <th key={h} className="pb-3 pt-4 px-4 text-start text-xs font-bold text-olive/60 uppercase tracking-wide">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
+      <Table headers={headers}>
             {batches.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-10 text-center text-sm text-olive/50">{t('common.noData')}</td>
+                <TableCell className="py-10 text-center text-text-primary/50">{t('common.noData')}</TableCell>
               </tr>
             ) : (
               batches.map(batch => (
-                <tr key={batch.id} className="border-b border-light/50 transition-colors hover:bg-light/30">
-                  <td className="py-4 px-4 text-sm font-semibold text-charcoal whitespace-nowrap">{batch.roast_date}</td>
-                  <td className="py-4 px-4 text-sm text-charcoal">
+                <TableRow key={batch.id}>
+                  <TableCell className="py-4 px-4 text-sm font-semibold text-text-secondary whitespace-nowrap">{batch.roast_date}</TableCell>
+                  <TableCell>
                     <div>{batch.green_inventory?.lot_name ?? 'â€”'}</div>
-                    <div className="text-xs text-olive/60">{batch.green_inventory?.origin ?? ''}</div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-charcoal">{batch.input_kg} kg</td>
-                  <td className="px-4 py-3 text-sm text-charcoal">{batch.output_kg} kg</td>
-                  <td className="px-4 py-3 text-sm">
-                    <span className={`font-medium ${(batch.yield_pct ?? 0) >= 85 ? 'text-green-600' : (batch.yield_pct ?? 0) >= 82 ? 'text-olive' : 'text-amber-600'}`}>
+                    <div className="text-xs text-text-primary/60">{batch.green_inventory?.origin ?? ''}</div>
+                  </TableCell>
+                  <TableCell>{batch.input_kg} kg</TableCell>
+                  <TableCell>{batch.output_kg} kg</TableCell>
+                  <TableCell className="px-4 py-3 text-sm">
+                    <span className={`font-medium ${(batch.yield_pct ?? 0) >= 85 ? 'text-green-600' : (batch.yield_pct ?? 0) >= 82 ? 'text-text-primary' : 'text-amber-500'}`}>
                       {batch.yield_pct != null ? `${batch.yield_pct}%` : 'â€”'}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-charcoal max-w-xs truncate">{batch.notes ?? 'â€”'}</td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-sm text-text-secondary max-w-xs truncate">{batch.notes ?? 'â€”'}</TableCell>
+                  <TableCell>
                     <Button onClick={() => setDeleteId(batch.id)} variant="danger" size="sm">
                       {t('common.delete')}
                     </Button>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
-          </tbody>
-        </table>
-      </div>
+          </Table>
 
       {/* New Batch Modal */}
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={t('roasting.newBatch')} size="md">
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               {t('roasting.greenLot')} <span className="text-red-500">*</span>
             </label>
             <select
               value={form.green_lot_id}
               onChange={e => setForm(p => ({ ...p, green_lot_id: e.target.value }))}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm"
             >
               <option value="">{t('roasting.selectGreenLot')}</option>
               {greenLots.map(l => (
@@ -181,27 +160,27 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
               ))}
             </select>
             {selectedLot && (
-              <p className="text-xs text-olive/60 mt-1">
+              <p className="text-xs text-text-primary/60 mt-1">
                 {t('roasting.availableShort')} {selectedLot.remaining_kg} {t('dashboard.kg')}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">
+            <label className="block text-sm font-medium text-text-primary mb-1">
               {t('roasting.roastDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={form.roast_date}
               onChange={e => setForm(p => ({ ...p, roast_date: e.target.value }))}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 {t('roasting.inputKg')} <span className="text-red-500">*</span>
               </label>
               <input
@@ -210,11 +189,11 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
                 min="0"
                 value={form.input_kg || ''}
                 onChange={e => setForm(p => ({ ...p, input_kg: parseFloat(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 {t('roasting.outputKg')} <span className="text-red-500">*</span>
               </label>
               <input
@@ -223,24 +202,24 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
                 min="0"
                 value={form.output_kg || ''}
                 onChange={e => setForm(p => ({ ...p, output_kg: parseFloat(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm"
               />
             </div>
           </div>
 
           {/* Yield auto-calculated display */}
           <div className="bg-cream rounded-lg px-4 py-3 flex items-center justify-between">
-            <span className="text-sm text-olive">{t('roasting.yieldPct')}</span>
-            <span className="text-lg font-bold text-sage">{yieldPct}{yieldPct !== 'â€”' ? '%' : ''}</span>
+            <span className="text-sm text-text-primary">{t('roasting.yieldPct')}</span>
+            <span className="text-lg font-bold text-accent">{yieldPct}{yieldPct !== 'â€”' ? '%' : ''}</span>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-olive mb-1">{t('roasting.notes')}</label>
+            <label className="block text-sm font-medium text-text-primary mb-1">{t('roasting.notes')}</label>
             <textarea
               value={form.notes ?? ''}
               onChange={e => setForm(p => ({ ...p, notes: e.target.value || null }))}
               rows={2}
-              className="w-full px-3 py-2 rounded-lg border border-cream-dark bg-cream-light text-charcoal focus:outline-none focus:ring-2 focus:ring-sage text-sm resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-text-secondary focus:outline-none focus:ring-2 focus:ring-accent text-sm resize-none"
             />
           </div>
 
@@ -259,7 +238,7 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
 
       {/* Delete Confirm */}
       <Modal isOpen={!!deleteId} onClose={() => setDeleteId(null)} title={t('common.delete')} size="sm">
-        <p className="text-sm text-charcoal mb-4">
+        <p className="text-sm text-text-secondary mb-4">
           {t('roasting.confirmDeleteBatch')}
         </p>
         <div className="flex gap-3">
@@ -274,4 +253,5 @@ export default function RoastingClient({ batches, greenLots }: RoastingClientPro
     </div>
   )
 }
+
 

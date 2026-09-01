@@ -1,7 +1,9 @@
-'use client'
+﻿'use client'
 
 import React, { useState } from 'react'
 import InputField from '@/components/fields/InputField'
+import Card from '@/components/card'
+import Button from '@/components/ui/Button'
 import { loginAction } from '@/app/actions/auth'
 
 export default function SignInDefault() {
@@ -35,15 +37,15 @@ export default function SignInDefault() {
   }
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-lightPrimary dark:bg-navy-900">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-horizon-sm dark:bg-navy-800">
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+      <Card extra="w-full max-w-md p-8 !rounded-2xl">
         <div className="mb-8 flex flex-col items-center">
-          <img src="/logo-dark.png" alt="Moreine Logo" className="h-20 mb-6 object-contain dark:hidden" />
-          <img src="/logo-white.png" alt="Moreine Logo" className="h-20 mb-6 object-contain hidden dark:block" />
-          <h3 className="mb-2 text-3xl font-bold text-navy-700 dark:text-white">
+          <img src="/logo-dark.png" alt="Moreine Logo" className="h-40 mb-6 w-full object-contain dark:hidden" />
+          <img src="/logo-white.png" alt="Moreine Logo" className="h-40 mb-6 w-full object-contain hidden dark:block" />
+          <h3 className="mb-2 text-3xl font-bold text-text-primary">
             Sign In
           </h3>
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-text-secondary text-center">
             Enter your email and password to access the ops dashboard.
           </p>
         </div>
@@ -74,15 +76,13 @@ export default function SignInDefault() {
 
           {error && <div className="mb-4 text-sm text-red-500 font-medium text-center">{error}</div>}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="linear w-full rounded-xl bg-brand-400 py-3 text-base font-medium text-white transition duration-200 hover:bg-brand-500 active:bg-brand-600 dark:bg-brand-400 dark:hover:bg-brand-300 dark:active:opacity-90 disabled:opacity-70"
-          >
+          <Button variant="primary" size="lg" className="w-full" type="submit" disabled={loading}>
             {loading ? 'Signing In...' : 'Sign In'}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   )
 }
+
+

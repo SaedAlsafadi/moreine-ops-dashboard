@@ -11,10 +11,10 @@ export default function Admin({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full w-full bg-background-100 dark:bg-background-900">
+    <div className="flex h-full w-full bg-background">
       <Sidebar routes={routes} open={open} setOpen={setOpen} variant="admin" />
-      <div className="h-full w-full font-dm dark:bg-navy-900">
-        <main className={`mx-2.5 flex-none transition-all dark:bg-navy-900 md:pe-2 xl:ms-[323px]`}>
+      <div className="h-full w-full font-dm bg-background">
+        <main className={`mx-2.5 flex-none transition-all md:pe-2 xl:ms-[323px]`}>
           <div>
             <div className="mx-auto p-2 !pt-[10px] md:p-2">
               {children}
