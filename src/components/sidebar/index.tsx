@@ -22,8 +22,8 @@ function SidebarHorizon(props: { routes: IRoute[]; open: boolean; setOpen: (open
 
       {/* Sidebar Drawer */}
       <div
-        className={`fixed start-0 top-0 bottom-0 z-50 flex h-full w-[285px] flex-col bg-surface pb-10 shadow-2xl shadow-black/10 transition-transform duration-200 ease-in-out xl:z-0 xl:block xl:translate-x-0 ${
-          open ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'
+        className={`fixed start-0 top-0 bottom-0 z-50 flex h-full w-[285px] flex-col bg-surface pb-10 shadow-2xl shadow-black/10 transition-transform duration-200 ease-in-out xl:z-30 xl:flex xl:!translate-x-0 xl:!transform-none ${
+          open ? 'translate-x-0' : 'max-xl:ltr:-translate-x-full max-xl:rtl:translate-x-full'
         }`}
       >
         {/* Mobile close button */}
