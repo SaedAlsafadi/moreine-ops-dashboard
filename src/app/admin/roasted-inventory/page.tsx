@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import RoastedInventoryClient from './RoastedInventoryClient'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RoastedInventoryPage() {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
@@ -10,16 +12,15 @@ export default async function RoastedInventoryPage() {
   const [{ data: stock }, { data: rawBatches }] = await Promise.all([
     supabase
       .from('roasted_stock')
-      .select('*, roast_batches(roast_date, green_inventory(lot_name))')
+      .select('*, roast_batches(id, roast_date, green_inventory(id, lot_name, origin, process, variety, region, cup_score))')
       .order('produced_date', { ascending: false }),
     supabase
       .from('roast_batches')
-      .select('id, roast_date, green_inventory(lot_name)')
+      .select('id, roast_date, green_inventory(id, lot_name, origin, process, variety, region, cup_score)')
       .order('roast_date', { ascending: false }),
   ])
 
-  // Supabase returns FK joins as arrays; normalise to single object
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Normalise FK joins
   const batches = (rawBatches ?? []).map((b: any) => ({
     id: b.id as string,
     roast_date: b.roast_date as string,
@@ -28,6 +29,12 @@ export default async function RoastedInventoryPage() {
       : b.green_inventory ?? null,
   }))
 
-  return <RoastedInventoryClient stock={stock ?? []} batches={batches} />
-}
+  const normalizedStock = (stock ?? []).map((s: any) => ({
+    ...s,
+    roast_batches: Array.isArray(s.roast_batches)
+      ? (s.roast_batches[0] ?? null)
+      : s.roast_batches ?? null,
+  }))
 
+  return <RoastedInventoryClient stock={normalizedStock} batches={batches} />
+}

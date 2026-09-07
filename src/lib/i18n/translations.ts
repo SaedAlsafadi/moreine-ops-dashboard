@@ -19,6 +19,8 @@ export interface TranslationShape {
     lotName: string; origin: string; supplier: string; arrivalDate: string
     initialKg: string; remainingKg: string; costPerKg: string; notes: string
     confirmDelete: string; importCsv: string; exportCsv: string; actions: string
+    low: string; process: string; region: string; variety: string; altitude: string
+    cupScore: string; tastingNotes: string
   }
   roasting: {
     title: string; newBatch: string; editBatch: string
@@ -32,7 +34,12 @@ export interface TranslationShape {
     importCsv: string; exportCsv: string
     bulk: string; packed: string; unallocated: string; bar: string
     b2c: string; b2b: string; inStock: string; shipped: string
-    sold: string; consumed: string
+    sold: string; consumed: string; batch: string; roastBatch: string; selectBatch: string
+    packageType: string; bag1kg: string; bag250g: string; dripBox: string; customPackage: string
+    quickAdjust: string; packFromBulk: string; transferStock: string; totalUnits: string
+    totalWeight: string; boxes: string; bags: string; units: string; sourceBulk: string
+    targetChannel: string; packUnitsCount: string; lotMatrix: string; stockUpdated: string
+    transferSuccess: string; packSuccess: string; insufficientBulk: string; dripSachetsPerBox: string
   }
   sales: {
     title: string; addSale: string; date: string; channel: string
@@ -111,6 +118,12 @@ const en: TranslationShape = {
     exportCsv:     'Export CSV',
     actions:       'Actions',
     low: 'Low',
+    process:       'Process',
+    region:        'Region',
+    variety:       'Variety',
+    altitude:      'Altitude',
+    cupScore:      'Cupping Score',
+    tastingNotes:  'Tasting Notes',
   },
   roasting: {
     title:      'Roasting Batches',
@@ -156,6 +169,28 @@ const en: TranslationShape = {
     batch: 'Batch',
     roastBatch: 'Roast Batch',
     selectBatch: 'Select batch...',
+    packageType:   'Packaging Format',
+    bag1kg:        '1kg Bag',
+    bag250g:       '250g Bag',
+    dripBox:       'Drip Filter Box',
+    customPackage: 'Custom',
+    quickAdjust:   'Quick Adjust',
+    packFromBulk:  'Pack from Bulk',
+    transferStock: 'Transfer / Allocate',
+    totalUnits:    'Total Units',
+    totalWeight:   'Total Coffee Weight',
+    boxes:         'boxes',
+    bags:          'bags',
+    units:         'units',
+    sourceBulk:    'Source Bulk',
+    targetChannel: 'Target Channel',
+    packUnitsCount:'Units to Pack',
+    lotMatrix:     'Stock by Channel & Package',
+    stockUpdated:  'Stock updated successfully',
+    transferSuccess:'Stock transferred successfully',
+    packSuccess:   'Packed successfully',
+    insufficientBulk:'Insufficient bulk stock available',
+    dripSachetsPerBox:'Sachets per Box',
   },
   sales: {
     title:             'Sales Log',
@@ -298,7 +333,13 @@ const ar: TranslationShape = {
     exportCsv:     'تصدير CSV',
     actions:       'الإجراءات',
     low: 'منخفض',
-  },
+      process:       'المعالجة',
+    region:        'المنطقة',
+    variety:       'السلالة',
+    altitude:      'الارتفاع',
+    cupScore:      'التقييم',
+    tastingNotes:  'الإيحاءات',
+},
   roasting: {
     title:      'دفعات التحميص',
     newBatch:   'دفعة جديدة',
@@ -343,7 +384,29 @@ const ar: TranslationShape = {
     batch: 'دفعة',
     roastBatch: 'دفعة التحميص',
     selectBatch: 'اختر دفعة...',
-  },
+      packageType:   'نوع التعبئة',
+    bag1kg:        'كيس 1 كجم',
+    bag250g:       'كيس 250 جرام',
+    dripBox:       'علبة أظراف فلتر',
+    customPackage: 'مخصص',
+    quickAdjust:   'تعديل سريع',
+    packFromBulk:  'تعبئة من الحبوب',
+    transferStock: 'تحويل / تخصيص',
+    totalUnits:    'إجمالي الوحدات',
+    totalWeight:   'إجمالي وزن البن',
+    boxes:         'علب',
+    bags:          'أكياس',
+    units:         'وحدات',
+    sourceBulk:    'البن المحمص الخام',
+    targetChannel: 'القناة المستهدفة',
+    packUnitsCount:'الكمية المراد تعبئتها',
+    lotMatrix:     'المخزون حسب القنوات ونوع التعبئة',
+    stockUpdated:  'تم تحديث المخزون بنجاح',
+    transferSuccess:'تم تحويل المخزون بنجاح',
+    packSuccess:   'تمت التعبئة بنجاح',
+    insufficientBulk:'الكمية غير المعبأة غير كافية',
+    dripSachetsPerBox:'عدد الأظراف بالعلبة',
+},
   sales: {
     title:             'المبيعات',
     addSale:           'إضافة عملية بيع',
