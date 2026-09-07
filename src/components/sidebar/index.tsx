@@ -7,33 +7,48 @@ import { IRoute } from 'types/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { MdLogout } from 'react-icons/md';
 
-function SidebarHorizon(props: { routes: IRoute[]; [x: string]: any }) {
+function SidebarHorizon(props: { routes: IRoute[]; open: boolean; setOpen: (open: boolean) => void; [x: string]: any }) {
   const { routes, open, setOpen } = props;
   return (
-    <div
-      className={`duration-175 linear fixed start-0 !z-50 flex min-h-full w-[285px] flex-col bg-surface pb-10 shadow-2xl shadow-white/5 transition-all md:!z-50 lg:!z-50 xl:!z-0 xl:block ${ open ? 'translate-x-0' : '-translate-x-96 xl:translate-x-0' }`}
-    >
-      {/* Mobile close button */}
-      <span
-        className="absolute right-4 top-4 block cursor-pointer xl:hidden"
-        onClick={() => setOpen(false)}
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs transition-opacity duration-200 xl:hidden"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar Drawer */}
+      <div
+        className={`fixed start-0 top-0 bottom-0 z-50 flex h-full w-[285px] flex-col bg-surface pb-10 shadow-2xl shadow-black/10 transition-transform duration-200 ease-in-out xl:z-0 xl:block xl:translate-x-0 ${
+          open ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'
+        }`}
       >
-        <HiX />
-      </span>
+        {/* Mobile close button */}
+        <button
+          type="button"
+          className="absolute end-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-background text-text-secondary hover:text-text-primary hover:bg-border/20 transition-colors xl:hidden"
+          onClick={() => setOpen(false)}
+          aria-label="Close menu"
+        >
+          <HiX className="h-5 w-5" />
+        </button>
 
-      {/* Logo */}
-      <div className="mt-[30px] mb-[20px] flex h-44 w-full items-center justify-center px-6">
-        <img src="/logo-dark.png" alt="Moreine" className="h-full w-full object-contain dark:hidden" />
-        <img src="/logo-white.png" alt="Moreine" className="h-full w-full object-contain hidden dark:block" />
-      </div>
+        {/* Logo */}
+        <div className="mt-[30px] mb-[20px] flex h-44 w-full items-center justify-center px-6">
+          <img src="/logo-dark.png" alt="Moreine" className="h-full w-full object-contain dark:hidden" />
+          <img src="/logo-white.png" alt="Moreine" className="h-full w-full object-contain hidden dark:block" />
+        </div>
 
-      {/* Divider */}
-      <div className="mb-7 h-px bg-border dark:bg-surface/30" />
+        {/* Divider */}
+        <div className="mb-7 h-px bg-border dark:bg-surface/30" />
 
-      {/* Nav links */}
-      <ul className="mb-auto pt-1">
-        <Links routes={routes} />
-      </ul>
+        {/* Nav links */}
+        <ul className="mb-auto pt-1 overflow-y-auto">
+          <Links routes={routes} onClose={() => setOpen(false)} />
+        </ul>
 
       {/* Logout button at the bottom */}
       <div className="px-4 pb-2 pt-4">
@@ -50,6 +65,7 @@ function SidebarHorizon(props: { routes: IRoute[]; [x: string]: any }) {
         </button>
       </div>
     </div>
+  </>
   );
 }
 

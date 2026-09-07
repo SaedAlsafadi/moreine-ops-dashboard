@@ -1,4 +1,4 @@
-﻿/* eslint-disable */
+/* eslint-disable */
 import React from 'react';
 import { useCallback } from 'react'
 import { useLanguage } from '@/lib/i18n/context';
@@ -7,12 +7,12 @@ import NavLink from 'components/link/NavLink';
 import DashIcon from 'components/icons/DashIcon';
 // chakra imports
 
-export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
+export const SidebarLinks = (props: { routes: RoutesType[]; onClose?: () => void }): JSX.Element => {
   const { t } = useLanguage()
   // Chakra color mode
   const pathname = usePathname();
 
-  const { routes } = props;
+  const { routes, onClose } = props;
 
   // verifies if routeName is the one active (in browser input)
   const activeRoute = useCallback(
@@ -30,7 +30,7 @@ export const SidebarLinks = (props: { routes: RoutesType[] }): JSX.Element => {
         route.layout === '/rtl'
       ) {
         return (
-          <NavLink key={index} href={route.layout + '/' + route.path}>
+          <NavLink key={index} href={route.layout + '/' + route.path} onClick={onClose}>
             <div className="relative mb-3 flex hover:cursor-pointer">
               <li
                 className="my-[3px] flex cursor-pointer items-center px-8"

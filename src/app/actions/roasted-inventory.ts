@@ -26,14 +26,152 @@ export interface RoastedStockInput {
 
 export async function addRoastedStock(input: RoastedStockInput) {
   const supabase = await createClient()
-  const payload = {
-    ...input,
-    quantity_kg: computeQuantityKg(input.package_type, input.unit_count ?? null, input.quantity_kg, input.package_size_g),
-    state: input.package_type === 'bulk' ? 'bulk' : 'packed',
-    package_size_g: input.package_type === 'bag_1kg' ? 1000 : input.package_type === 'bag_250g' ? 250 : input.package_type === 'drip_box' ? 75 : input.package_size_g ?? null,
+
+  // Prevent duplicate active rows: check if matching active row already exists
+  const { data: existing } = await supabase
+    .from('roasted_stock')
+    .select('*')
+    .eq('roast_batch_id', input.roast_batch_id)
+    .eq('channel', input.channel)
+    .eq('package_type', input.package_type)
+    .eq('status', 'in_stock')
+    .limit(1)
+
+  if (existing && existing.length > 0) {
+    const cur = existing[0]
+    const nextUnits = (cur.unit_count || 0) + (input.unit_count || 0)
+    const nextKg = computeQuantityKg(
+      input.package_type,
+      nextUnits,
+      (Number(cur.quantity_kg) || 0) + (Number(input.quantity_kg) || 0),
+      input.package_size_g
+    )
+    const { error } = await supabase
+      .from('roasted_stock')
+      .update({
+        unit_count: nextUnits,
+        quantity_kg: nextKg,
+      })
+      .eq('id', cur.id)
+    if (error) throw new Error(error.message)
+  } else {
+    const payload = {
+      ...input,
+      quantity_kg: computeQuantityKg(input.package_type, input.unit_count ?? null, input.quantity_kg, input.package_size_g),
+      state: input.package_type === 'bulk' ? 'bulk' : 'packed',
+      package_size_g: input.package_type === 'bag_1kg' ? 1000 : input.package_type === 'bag_250g' ? 250 : input.package_type === 'drip_box' ? 75 : input.package_size_g ?? null,
+    }
+    const { error } = await supabase.from('roasted_stock').insert([payload])
+    if (error) throw new Error(error.message)
   }
-  const { error } = await supabase.from('roasted_stock').insert([payload])
-  if (error) throw new Error(error.message)
+
+  revalidatePath('/admin/roasted-inventory')
+  revalidatePath('/admin/dashboard')
+  revalidatePath('/admin/movements')
+}
+
+// -------------------------------------------------------------
+// Idempotent Direct Count Action (Set exact count or stepper delta)
+// -------------------------------------------------------------
+export async function setStockCount(params: {
+  roastBatchId: string
+  packageType: PackageType
+  channel: ChannelType
+  unitCount: number
+  notes?: string
+}) {
+  const supabase = await createClient()
+  const targetUnits = Math.max(0, Math.round(Number(params.unitCount) || 0))
+  const packageSizeG = params.packageType === 'bag_1kg' ? 1000 : params.packageType === 'bag_250g' ? 250 : params.packageType === 'drip_box' ? 75 : 250
+  const targetKg = computeQuantityKg(params.packageType, targetUnits, 0, packageSizeG)
+
+  // 1. Check if active row(s) exist
+  const { data: existingRows, error: fetchErr } = await supabase
+    .from('roasted_stock')
+    .select('*')
+    .eq('roast_batch_id', params.roastBatchId)
+    .eq('package_type', params.packageType)
+    .eq('channel', params.channel)
+    .eq('status', 'in_stock')
+
+  if (fetchErr) throw new Error(fetchErr.message)
+
+  if (existingRows && existingRows.length > 0) {
+    const primary = existingRows[0]
+    const deltaKg = Math.round((targetKg - Number(primary.quantity_kg)) * 1000) / 1000
+
+    const { error: updateErr } = await supabase
+      .from('roasted_stock')
+      .update({
+        unit_count: targetUnits,
+        quantity_kg: targetKg,
+        notes: params.notes !== undefined ? params.notes : primary.notes,
+      })
+      .eq('id', primary.id)
+
+    if (updateErr) throw new Error(updateErr.message)
+
+    // Automatically purge any duplicate rows if they existed
+    if (existingRows.length > 1) {
+      const extraIds = existingRows.slice(1).map(r => r.id)
+      await supabase.from('roasted_stock').delete().in('id', extraIds)
+    }
+
+    // Log stock movement if there was a change
+    if (deltaKg !== 0) {
+      try {
+        await supabase.from('stock_movements').insert([{
+          category: 'roasted',
+          action: 'adjusted',
+          quantity_kg: deltaKg,
+          ref_id: primary.id,
+          to_channel: params.channel,
+          note: params.notes || `Stock count set to ${targetUnits} units (${deltaKg > 0 ? '+' : ''}${deltaKg} kg)`
+        }])
+      } catch (smErr) {
+        console.warn('Could not log stock movement:', smErr)
+      }
+    }
+  } else {
+    // If no row exists and targetUnits > 0, insert single row
+    if (targetUnits > 0) {
+      const { data: newRow, error: insertErr } = await supabase
+        .from('roasted_stock')
+        .insert([{
+          roast_batch_id: params.roastBatchId,
+          state: params.packageType === 'bulk' ? 'bulk' : 'packed',
+          package_type: params.packageType,
+          package_size_g: packageSizeG,
+          unit_count: targetUnits,
+          box_sachets_count: params.packageType === 'drip_box' ? 5 : null,
+          quantity_kg: targetKg,
+          channel: params.channel,
+          status: 'in_stock',
+          produced_date: new Date().toISOString().split('T')[0],
+          notes: params.notes || 'Daily inventory count',
+        }])
+        .select()
+        .single()
+
+      if (insertErr) throw new Error(insertErr.message)
+
+      if (newRow) {
+        try {
+          await supabase.from('stock_movements').insert([{
+            category: 'roasted',
+            action: 'adjusted',
+            quantity_kg: targetKg,
+            ref_id: newRow.id,
+            to_channel: params.channel,
+            note: params.notes || `Initial stock count: ${targetUnits} units (${targetKg} kg)`
+          }])
+        } catch (smErr) {
+          console.warn('Could not log stock movement:', smErr)
+        }
+      }
+    }
+  }
+
   revalidatePath('/admin/roasted-inventory')
   revalidatePath('/admin/dashboard')
   revalidatePath('/admin/movements')

@@ -6,7 +6,7 @@ import { ChannelSplitChart } from './RoastedCharts'
 import { Table, TableRow, TableCell } from '@/components/ui/Table'
 import Card from '@/components/card'
 
-import { useState, useTransition, useCallback, useMemo } from 'react'
+import { useState, useEffect, useTransition, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLanguage } from '@/lib/i18n/context'
 import Modal from '@/components/ui/Modal'
@@ -19,6 +19,7 @@ import {
   deleteRoastedStock,
   importRoastedStock,
   quickAdjustStock,
+  setStockCount,
   packFromBulkAction,
   transferStockAction,
   type RoastedStockInput,
@@ -87,6 +88,110 @@ const channelVariant: Record<ChannelType, 'green' | 'yellow' | 'red' | 'blue' | 
 
 const CHANNELS: ChannelType[] = ['unallocated', 'bar', 'b2c', 'b2b']
 const PACK_TYPES: PackageType[] = ['bag_1kg', 'bag_250g', 'drip_box']
+
+interface StockCellInputProps {
+  count: number
+  isPending: boolean
+  isSaved: boolean
+  onUpdate: (newCount: number) => Promise<void>
+}
+
+function StockCellInput({
+  count,
+  isPending,
+  isSaved,
+  onUpdate,
+}: StockCellInputProps) {
+  const [val, setVal] = useState(String(count))
+  const [isEditing, setIsEditing] = useState(false)
+
+  useEffect(() => {
+    if (!isEditing) {
+      setVal(String(count))
+    }
+  }, [count, isEditing])
+
+  const handleCommit = async () => {
+    setIsEditing(false)
+    const parsed = parseInt(val, 10)
+    const nextCount = isNaN(parsed) || parsed < 0 ? 0 : parsed
+    if (nextCount !== count) {
+      await onUpdate(nextCount)
+    } else {
+      setVal(String(count))
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur()
+    } else if (e.key === 'Escape') {
+      setIsEditing(false)
+      setVal(String(count))
+    }
+  }
+
+  return (
+    <div
+      className={`inline-flex items-center justify-center gap-1 bg-surface border rounded-lg p-1 shadow-xs transition-all ${
+        isSaved
+          ? 'border-emerald-500 ring-1 ring-emerald-500/30'
+          : isEditing
+          ? 'border-accent ring-1 ring-accent/30'
+          : 'border-border'
+      }`}
+    >
+      {/* Decrement (-1) */}
+      <button
+        type="button"
+        onClick={() => onUpdate(Math.max(0, count - 1))}
+        disabled={count <= 0 || isPending}
+        className="w-6 h-6 flex items-center justify-center rounded bg-background hover:bg-red-500/10 hover:text-red-600 font-bold text-sm text-text-secondary disabled:opacity-20 disabled:pointer-events-none transition-colors"
+        title="انقاص وحدة واحدة (-1)"
+      >
+        -
+      </button>
+
+      {/* Direct number input */}
+      <div className="relative flex items-center justify-center">
+        <input
+          type="number"
+          min="0"
+          value={val}
+          onChange={e => {
+            setIsEditing(true)
+            setVal(e.target.value)
+          }}
+          onFocus={() => setIsEditing(true)}
+          onBlur={handleCommit}
+          onKeyDown={handleKeyDown}
+          disabled={isPending}
+          className={`w-11 text-center font-bold text-xs bg-transparent border-0 focus:outline-none focus:ring-0 p-0 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+            count > 0 ? 'text-text-primary' : 'text-text-secondary/40'
+          }`}
+          title="اضغط لتعديل العدد مباشرة واضغط Enter للحفظ"
+        />
+        {isPending && (
+          <span className="absolute -top-1 -right-1 flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+          </span>
+        )}
+      </div>
+
+      {/* Increment (+1) */}
+      <button
+        type="button"
+        onClick={() => onUpdate(count + 1)}
+        disabled={isPending}
+        className="w-6 h-6 flex items-center justify-center rounded bg-background hover:bg-accent/15 hover:text-accent font-bold text-sm text-text-secondary disabled:opacity-20 transition-colors"
+        title="زيادة وحدة واحدة (+1)"
+      >
+        +
+      </button>
+    </div>
+  )
+}
 
 export default function RoastedInventoryClient({ stock, batches }: RoastedInventoryClientProps) {
   const { t, locale } = useLanguage()
@@ -230,63 +335,78 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
       .map(([batchId, data]) => ({ batchId, ...data }))
   }, [batches, localStock])
 
-  // Instant inline stepper adjustment (+1 / -1)
-  async function handleQuickStep(
+  // Active cell state tracking for concurrency and feedback
+  const [activeCellKey, setActiveCellKey] = useState<string | null>(null)
+  const [savedCellKey, setSavedCellKey] = useState<string | null>(null)
+
+  // Direct count or stepper adjustment using setStockCount
+  async function handleUpdateStockCount(
     batchId: string,
     pkgType: PackageType,
     channel: ChannelType,
-    delta: number
+    targetCount: number
   ) {
+    const nextUnits = Math.max(0, Math.round(targetCount))
+    const cellKey = `${batchId}-${pkgType}-${channel}`
+
+    if (activeCellKey === cellKey) return
+
     setError(null)
-    const existing = localStock.find(
-      s => s.roast_batch_id === batchId && s.package_type === pkgType && s.channel === channel
-    )
+    setActiveCellKey(cellKey)
 
-    if (existing) {
-      const currentUnits = existing.unit_count ?? 0
-      const nextUnits = Math.max(0, currentUnits + delta)
-      const nextKg = computeQuantityKg(pkgType, nextUnits, 0, existing.package_size_g)
+    const nextKg = computeQuantityKg(pkgType, nextUnits, 0)
 
-      // Optimistic update
-      setLocalStock(prev =>
-        prev.map(item =>
+    // Optimistic update in local state
+    setLocalStock(prev => {
+      const existing = prev.find(
+        s => s.roast_batch_id === batchId && s.package_type === pkgType && s.channel === channel && s.status === 'in_stock'
+      )
+      if (existing) {
+        return prev.map(item =>
           item.id === existing.id
             ? { ...item, unit_count: nextUnits, quantity_kg: nextKg }
             : item
         )
-      )
-
-      try {
-        await quickAdjustStock({
-          stockId: existing.id,
-          newUnitCount: nextUnits,
-          reason: `Quick adjustment (${delta > 0 ? '+' : ''}${delta} ${t('roastedInventory.' + pkgType) || pkgType})`,
-        })
-      } catch (err: any) {
-        setError(err.message || 'Update failed')
-        router.refresh()
-      }
-    } else {
-      // Create new row if clicking + from 0
-      if (delta <= 0) return
-      const initialUnits = delta
-      const initialKg = computeQuantityKg(pkgType, initialUnits, 0)
-      try {
-        await addRoastedStock({
+      } else if (nextUnits > 0) {
+        const optimisticId = 'temp-' + Date.now()
+        const batchInfo = batches.find(b => b.id === batchId)
+        const newRow: RoastedStockRow = {
+          id: optimisticId,
           roast_batch_id: batchId,
-          state: pkgType === 'bulk' ? 'bulk' : 'packed',
+          state: 'packed',
           package_type: pkgType,
-          unit_count: initialUnits,
-          quantity_kg: initialKg,
+          package_size_g: pkgType === 'bag_1kg' ? 1000 : pkgType === 'bag_250g' ? 250 : 75,
+          unit_count: nextUnits,
+          box_sachets_count: pkgType === 'drip_box' ? 5 : null,
+          quantity_kg: nextKg,
           channel: channel,
           status: 'in_stock',
           produced_date: new Date().toISOString().split('T')[0],
-          notes: `Added via quick adjust`,
-        })
-        router.refresh()
-      } catch (err: any) {
-        setError(err.message || 'Creation failed')
+          notes: null,
+          roast_batches: batchInfo ? {
+            roast_date: batchInfo.roast_date,
+            green_inventory: batchInfo.green_inventory,
+          } : null,
+        }
+        return [...prev, newRow]
       }
+      return prev
+    })
+
+    try {
+      await setStockCount({
+        roastBatchId: batchId,
+        packageType: pkgType,
+        channel: channel,
+        unitCount: nextUnits,
+      })
+      setSavedCellKey(cellKey)
+      setTimeout(() => setSavedCellKey(k => (k === cellKey ? null : k)), 1500)
+    } catch (err: any) {
+      setError(err.message || 'Update failed')
+      router.refresh()
+    } finally {
+      setActiveCellKey(null)
     }
   }
 
@@ -697,38 +817,20 @@ export default function RoastedInventoryClient({ stock, batches }: RoastedInvent
 
                               {/* Channels: Bar, B2C, B2B, Unallocated */}
                               {(['bar', 'b2c', 'b2b', 'unallocated'] as const).map(channel => {
-                                const cellItem = items.find(
+                                const channelItems = items.filter(
                                   i => i.package_type === pkgType && i.channel === channel
                                 )
-                                const count = cellItem?.unit_count ?? 0
+                                const count = channelItems.reduce((acc, curr) => acc + (curr.unit_count || 0), 0)
+                                const cellKey = `${batchId}-${pkgType}-${channel}`
 
                                 return (
                                   <td key={channel} className="py-2 px-2 text-center">
-                                    <div className="inline-flex items-center justify-center gap-1.5 bg-surface border border-border rounded-lg p-1 shadow-xs">
-                                      <button
-                                        onClick={() => handleQuickStep(batchId, pkgType, channel, -1)}
-                                        disabled={count <= 0 || isPending}
-                                        className="w-6 h-6 flex items-center justify-center rounded bg-background hover:bg-red-500/10 hover:text-red-600 font-bold text-sm text-text-secondary disabled:opacity-30 disabled:pointer-events-none transition-colors"
-                                        title="انقاص وحدة واحدة (-1)"
-                                      >
-                                        -
-                                      </button>
-                                      <span
-                                        className={`w-9 text-center font-bold text-xs ${
-                                          count > 0 ? 'text-text-primary' : 'text-text-secondary/40'
-                                        }`}
-                                      >
-                                        {count}
-                                      </span>
-                                      <button
-                                        onClick={() => handleQuickStep(batchId, pkgType, channel, +1)}
-                                        disabled={isPending}
-                                        className="w-6 h-6 flex items-center justify-center rounded bg-background hover:bg-accent/15 hover:text-accent font-bold text-sm text-text-secondary transition-colors"
-                                        title="زيادة وحدة واحدة (+1)"
-                                      >
-                                        +
-                                      </button>
-                                    </div>
+                                    <StockCellInput
+                                      count={count}
+                                      isPending={activeCellKey === cellKey}
+                                      isSaved={savedCellKey === cellKey}
+                                      onUpdate={newCount => handleUpdateStockCount(batchId, pkgType, channel, newCount)}
+                                    />
                                   </td>
                                 )
                               })}
