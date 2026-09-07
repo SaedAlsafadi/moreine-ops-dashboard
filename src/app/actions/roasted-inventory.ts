@@ -117,14 +117,18 @@ export async function quickAdjustStock(params: {
   // Log to stock_movements
   const deltaKg = Math.round((updatedKg - stock.quantity_kg) * 1000) / 1000
   if (deltaKg !== 0) {
-    await supabase.from('stock_movements').insert([{
-      category: 'roasted',
-      action: 'adjusted',
-      quantity_kg: deltaKg,
-      ref_id: params.stockId,
-      to_channel: stock.channel,
-      note: params.reason || `Quick stock adjustment (${deltaKg > 0 ? '+' : ''}${deltaKg} kg / ${updatedUnits ?? 0} units)`
-    }])
+    try {
+      await supabase.from('stock_movements').insert([{
+        category: 'roasted',
+        action: 'adjusted',
+        quantity_kg: deltaKg,
+        ref_id: params.stockId,
+        to_channel: stock.channel,
+        note: params.reason || `Quick stock adjustment (${deltaKg > 0 ? '+' : ''}${deltaKg} kg / ${updatedUnits ?? 0} units)`
+      }])
+    } catch (smErr) {
+      console.warn('Could not log stock movement:', smErr)
+    }
   }
 
   revalidatePath('/admin/roasted-inventory')
@@ -225,15 +229,19 @@ export async function packFromBulkAction(params: {
   }
 
   // 4. Record stock movement
-  await supabase.from('stock_movements').insert([{
-    category: 'roasted',
-    action: 'packed',
-    quantity_kg: neededKg,
-    ref_id: bulkStock.id,
-    from_channel: bulkStock.channel,
-    to_channel: targetChannel,
-    note: note || `Packed ${unitCount} ${packageType} (${neededKg} kg) to ${targetChannel}`,
-  }])
+  try {
+    await supabase.from('stock_movements').insert([{
+      category: 'roasted',
+      action: 'packed',
+      quantity_kg: neededKg,
+      ref_id: bulkStock.id,
+      from_channel: bulkStock.channel,
+      to_channel: targetChannel,
+      note: note || `Packed ${unitCount} ${packageType} (${neededKg} kg) to ${targetChannel}`,
+    }])
+  } catch (smErr) {
+    console.warn('Could not log stock movement:', smErr)
+  }
 
   revalidatePath('/admin/roasted-inventory')
   revalidatePath('/admin/dashboard')
@@ -333,15 +341,19 @@ export async function transferStockAction(params: {
   }
 
   // Record transfer movement
-  await supabase.from('stock_movements').insert([{
-    category: 'roasted',
-    action: 'transferred',
-    quantity_kg: moveKg,
-    ref_id: source.id,
-    from_channel: source.channel,
-    to_channel: toChannel,
-    note: note || `Transferred ${moveUnits > 0 ? `${moveUnits} units` : `${moveKg} kg`} from ${source.channel} to ${toChannel}`,
-  }])
+  try {
+    await supabase.from('stock_movements').insert([{
+      category: 'roasted',
+      action: 'transferred',
+      quantity_kg: moveKg,
+      ref_id: source.id,
+      from_channel: source.channel,
+      to_channel: toChannel,
+      note: note || `Transferred ${moveUnits > 0 ? `${moveUnits} units` : `${moveKg} kg`} from ${source.channel} to ${toChannel}`,
+    }])
+  } catch (smErr) {
+    console.warn('Could not log stock movement:', smErr)
+  }
 
   revalidatePath('/admin/roasted-inventory')
   revalidatePath('/admin/dashboard')
