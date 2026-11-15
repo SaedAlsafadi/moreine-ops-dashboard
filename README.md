@@ -1,6 +1,20 @@
+<div align="center">
+
 # Moreine Ops Dashboard
 
-Internal operations dashboard for **Moreine Coffee Roastery** — a full-stack inventory and sales management system built for roastery staff.
+**Inventory, roasting and sales operations dashboard for Moreine Coffee Roastery**
+
+[**Live app →**](https://moreine-ops-dashboard.vercel.app) (sign-in required)
+
+![Next.js](https://img.shields.io/badge/Next.js_15-000000?style=flat&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat&logo=supabase&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployed_on_Vercel-000000?style=flat&logo=vercel&logoColor=white)
+
+</div>
+
+A full-stack internal tool that roastery staff use to track green-coffee lots, log roast batches and yields, manage roasted stock across sales channels, and record sales. An immutable stock-movement ledger is populated automatically by database triggers. The interface is bilingual (English/Arabic) with full RTL support.
 
 ---
 
@@ -33,7 +47,7 @@ Internal operations dashboard for **Moreine Coffee Roastery** — a full-stack i
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/<your-org>/moreine-ops-dashboard.git
+git clone https://github.com/SaedAlsafadi/moreine-ops-dashboard.git
 cd moreine-ops-dashboard
 npm install
 ```
@@ -122,6 +136,12 @@ supabase/
 
 ---
 
+## Credits
+
+The UI is built on the open-source [Horizon UI Tailwind (Next.js)](https://github.com/horizon-ui/horizon-tailwind-react-nextjs) dashboard template and adapted with a custom design-token system, new modules, i18n and RTL.
+
 ## License
 
-Private — Moreine Coffee Roastery internal use only.
+Proprietary. This dashboard was built for Moreine Coffee Roastery. The source is public for portfolio review only, and no license is granted to reuse it.
+
+**Author:** [Saed Alsafadi](https://github.com/SaedAlsafadi)
